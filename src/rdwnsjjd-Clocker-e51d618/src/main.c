@@ -5,40 +5,12 @@
 #include "../includes/common/inc.h"
 #include "../headers/time_handler.h"
 #include "../headers/mutexed.h"
-#include "../headers/updater.h"
 
 typedef pthread_t       Thread;
 
 Int32 main() {
 
-    Updater updater = updater_new();
-    soft_assert_wrn(
-        updater != 0,
-        "Creating new update object failed!"
-    );
-
-    UpdateStatus update_res = updater_check(updater);
-    soft_assert_wrn(
-        update_res != US_Error,
-        "Checking for new version failed!"
-    );
-
-    if (update_res == US_Updatable) {
-        printf(
-            "Version %s is available!\nDo you want to install it? [Y/n]", 
-            updater_get_new_tag(updater)
-        );
-
-        Char result = fgetc(stdin);
-        if (result == '\n' || result == 'Y' || result == 'y') {
-            updater_do_update(updater);
-        }
-        else {
-            printf("Aborted!\n\n");
-        }
-    }
-
-    printf("Hello!\n Wellcomfgsdge to Clocker!\n");
+    printf("Hello!\n Wellcome to Clocker!\n");
 
     Mutexed* state = mutexed_new(gen_type(0));
     soft_assert_ret_int(state != INVALID_HNDL, "Failed to create new mutexed!");

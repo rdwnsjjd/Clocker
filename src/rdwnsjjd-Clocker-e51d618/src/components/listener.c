@@ -36,10 +36,10 @@ Listener listener_new() {
     _Listener* new = (_Listener*) malloc(sizeof(_Listener));
     soft_assert_ret_id(new, "Allocating new listener failed!");
 
-    new->keyboard.input_file = open("/dev/input/by-path/platform-i8042-serio-0-event-kbd", O_RDONLY);
+    new->keyboard.input_file = open("/dev/input/by-path/pci-0000:00:14.0-usb-0:11:1.0-event-kbd", O_RDONLY);
     soft_assert_ret_id(new->keyboard.input_file != -1, "Opening keyboard input file failed: %s", strerror(errno));
 
-    new->mouse.input_file = open("/dev/input/by-path/pci-0000:00:14.0-usb-0:3:1.0-event-mouse", O_RDONLY);
+    new->mouse.input_file = open("/dev/input/by-path/pci-0000:00:14.0-usb-0:12:1.0-event-mouse", O_RDONLY);
     soft_assert_ret_id(new->mouse.input_file != -1, "Opening mouse input file failed: %s", strerror(errno));
 
     new->keyboard.fired = True;
