@@ -22,23 +22,19 @@ Hndl time_handle(Void* arg) {
     Listener listener = listener_new();
 
     do {
-        if (state->inner.i32 != 2) {
-            // temperory timer start 
-            timer_start(tmp_timer);
-        }
+        // temperory timer start 
+        timer_start(tmp_timer);
         
 
         // listen to keyboard-mouse events
         listener_listen(listener);
         
-        if (state->inner.i32 != 2) {
-            // temperory timer pause
-            timer_pause(tmp_timer);
-        }
+        // temperory timer pause
+        timer_pause(tmp_timer);
 
         // calculating waste time
         UInt64 waste_time = timer_time_spend(tmp_timer);
-        if (waste_time > 120) {
+        if (waste_time > 120 && state->inner.i32 != 2) {
             // if waste time was more than 2 min, reducing main time
             timer_reduce(main_timer, waste_time);
         }

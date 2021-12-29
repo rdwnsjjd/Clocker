@@ -6,18 +6,11 @@
 #include <dirent.h>
 
 #include "../includes/common/inc.h"
+#include "../headers/updater_checker.h"
 
 typedef struct passwd Passwd;
 typedef struct stat   Stat;
 typedef struct dirent Dirnet;
-typedef UInt64 Updater;
-
-typedef enum {
-    US_Error,
-    US_NoUpdate,
-    US_Updatable
-}
-UpdateStatus;
 
 typedef struct {
     Str version;
@@ -30,179 +23,6 @@ Str updater_get_conf_file(Str buff) {
 
     Passwd* home_dir       = getpwuid(getuid());
     sprintf(buff, "%s/%s", home_dir->pw_dir, ".clocker/clocker.conf");
-}
-
-
-Updater updater_new() {
-    _Updater* new = (_Updater*) malloc(sizeof(_Updater));
-    soft_assert_ret_id(new != INVALID_HNDL, "Allocating new updater failed!");
-
-    Passwd* home_dir       = getpwuid(getuid());
-    Char    data_dir[128]  = {0};
-    Char    data_file[128] = {0};
-    Stat    stat_var       = {0};
-
-    sprintf(data_dir, "%s/%s", home_dir->pw_dir, ".clocker");
-    sprintf(data_file, "%s/%s", home_dir->pw_dir, ".clocker/clocker.conf");
-
-    if (
-        !(stat(data_dir, &stat_var) == 0 &&
-        S_ISDIR(stat_var.st_mode))
-    ) {
-
-        soft_assert_ret_id(
-            mkdir(data_dir, 0700) == 0,
-            "Creating main app directory failed! (%s)",
-            strerror(errno)
-        );
-
-        FILE* data_file_ptr = fopen(data_file, "w");
-        soft_assert_ret_id(
-            data_file_ptr != INVALID_HNDL,
-            "Creating main app data file failed! (%s)",
-            strerror(errno)
-        );
-
-        fputs("0.0-beta.0", data_file_ptr);
-
-        soft_assert_ret_id(
-            fclose(data_file_ptr) == 0,
-            "Closing main app data failed! (%s)",
-            strerror(errno)
-        );
-    }
-    
-    FILE* data_file_ptr = fopen(data_file, "r");
-    soft_assert_ret_id(data_file_ptr != INVALID_HNDL, "App data file is missed!");
-
-    // getting data file size
-    fseek(data_file_ptr, 0L, SEEK_END);
-    Size data_file_size = ftell(data_file_ptr);
-    fseek(data_file_ptr, 0L, SEEK_SET);
-
-    new->version = (Str) malloc(sizeof(Char) * data_file_size);
-    soft_assert_ret_id(new->version != INVALID_HNDL, "Allocating new string failed!");
-    // fgets(d, 10, data_file_ptr);
-    fscanf(data_file_ptr, "%s", new->version);
-
-    soft_assert_ret_id(
-        fclose(data_file_ptr) == 0,
-        "Closing main app data failed! (%s)",
-        strerror(errno)
-    );
-
-    return (Updater) new;
-}
-
-
-Str updater_get_version(Updater updater) {
-    _Updater* _updater = (_Updater*) updater;
-    return _updater->version;
-}
-
-
-Str updater_get_new_tag(Updater updater) {
-    _Updater* _updater = (_Updater*) updater;
-    return _updater->new_version;
-}
-
-
-UpdateStatus updater_check(Updater updater) {
-
-    _Updater* _updater = (_Updater*) updater;
-
-    soft_assert_ret_id(
-        system("wget https://api.github.com/repos/rdwnsjjd/clocker/tags -P /root/.clocker/.tags --quiet") == 0,
-        "Cannot get available version of clocker! (%s)",
-        strerror(errno)
-    );
-
-    FILE* tags_file_ptr = fopen("/root/.clocker/.tags/tags", "r");
-    soft_assert_ret_id(tags_file_ptr != INVALID_HNDL, "Tag file is missed!");
-
-    // getting tags file size
-    fseek(tags_file_ptr, 0L, SEEK_END);
-    Size tags_file_size = ftell(tags_file_ptr);
-    fseek(tags_file_ptr, 0L, SEEK_SET);
-
-    Str available_version = (Str) malloc(sizeof(Char) * tags_file_size);
-    soft_assert_ret_id(available_version != INVALID_HNDL, "Allocating new string failed!");
-
-    for (Idx idx = 0; idx < tags_file_size; idx++) {
-        *(available_version + idx) = fgetc(tags_file_ptr);
-    }
-
-    Str  cur             = available_version;
-    Bool target_expected = False;
-    Idx  last_index      = 0;
-
-    for (Idx idx = 0; *cur != EOF; cur++, idx++) {
-
-        if (*cur == ' ' || *cur == '\n') {
-            continue;
-        }
-
-        if (*cur == 'n' && 
-            *(cur + 1) == 'a' && 
-            *(cur + 2) == 'm' && 
-            *(cur + 3) == 'e'
-        ) {
-            cur += 9;
-            target_expected = True;
-
-            idx += 9;
-            last_index = idx;
-            
-        }
-
-        if (*cur == '\"' && target_expected) {
-            
-            Size len = idx - last_index;
-
-            Str string = (Str) calloc(1, len);
-            soft_assert_ret_id(string != INVALID_HNDL, "Allocating new string failed!");
-
-            memcpy(string, available_version + last_index, len);
-            if (strcmp(_updater->version, string) == 0) {
-
-                soft_assert_ret_id(
-                    fclose(tags_file_ptr) == 0,
-                    "Closing tags file failed! (%s)",
-                    strerror(errno)
-                );
-
-                soft_assert_ret_id(
-                    remove("/root/.clocker/.tags/tags") == 0,
-                    "Deleting tags file failed (%s)",
-                    strerror(errno)
-                );
-
-                free(available_version);
-                return US_NoUpdate;
-            }
-
-            else {
-                _updater->new_version = string;
-
-                soft_assert_ret_id(
-                    fclose(tags_file_ptr) == 0,
-                    "Closing tags file failed! (%s)",
-                    strerror(errno)
-                );
-
-                soft_assert_ret_id(
-                    remove("/root/.clocker/.tags/tags") == 0,
-                    "Deleting tags file failed (%s)",
-                    strerror(errno)
-                );
-
-                free(available_version);
-
-                return US_Updatable;
-            }
-        }
-    }
-    
 }
 
 
@@ -262,8 +82,6 @@ Bool updater_do_update(Updater updater) {
             getcwd(path_buff, 2048);
             strcat(path_buff, "/");
 
-            printf("%s\n", path_buff);
-
             memset(cmd_buff, 0, 2048);
             sprintf(
                 cmd_buff, "cp /root/.clocker/.new/source/%s/build/clocker %s",
@@ -297,8 +115,12 @@ Bool updater_do_update(Updater updater) {
             break;
         }
     }
-    int a = closedir(dir);
-    
+
+    soft_assert_ret_id(
+        closedir(dir) == 0,
+        "Closing directory failed! (%s)",
+        strerror(errno)
+    );
 
     soft_assert_ret_id(
         system("rm -rf /root/.clocker/.new") == 0,
@@ -306,48 +128,26 @@ Bool updater_do_update(Updater updater) {
     );
 
     printf("Done!\n");
-
     return 1;
 }
 
 Void main() {
 
-    Str argv[3] = {"/home/rdwn/Documents/projs/Clocker/build/clocker", "no-update", INVALID_HNDL};
+    Str argv[2] = {"/home/rdwn/Documents/projs/Clocker/build/clocker", INVALID_HNDL};
 
-    Updater updater = updater_new();
+    Updater checker = update_checker_new();
     soft_assert_wrn(
-        updater != 0,
+        checker != 0,
         "Creating new update object failed!"
     );
 
-    UpdateStatus update_res = updater_check(updater);
+    UpdateStatus update_check_res = update_checker_check(checker);
     soft_assert_wrn(
-        update_res != US_Error,
+        update_check_res != US_Error,
         "Checking for new version failed!"
     );
 
-    if (update_res == US_Updatable) {
-        printf(
-            "Version %s is available!\nDo you wanfasdfast to install it? [Y/n]", 
-            updater_get_new_tag(updater)
-        );
-
-        Char result = fgetc(stdin);
-        if (result == '\n' || result == 'Y' || result == 'y') {
-            updater_do_update(updater);
-            execvp("/home/rdwn/Documents/projs/Clocker/clocker", INVALID_HNDL);
-            return;
-        }
-        else {
-            printf("Aborted!\n\n");
-            execvp("/home/rdwn/Documents/projs/Clocker/build/clocker", argv);
-            perror("");
-            return;
-        }
-    }
-
-
-    execvp("/home/rdwn/Documents/projs/Clocker/build/clocker", argv);
-            perror("");
+    updater_do_update(checker);
+    execvp("/home/rdwn/Documents/projs/Clocker/clocker", argv);
     return;
 }

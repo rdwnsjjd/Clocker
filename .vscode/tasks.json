@@ -12,6 +12,7 @@
                 "/home/rdwn/Documents/projs/Clocker/src/components/timer.c",
                 "/home/rdwn/Documents/projs/Clocker/src/components/time_handler.c",
                 "/home/rdwn/Documents/projs/Clocker/src/components/mutexed.c",
+                "/home/rdwn/Documents/projs/Clocker/src/components/update_checker.c",
                 "-o",
                 "${fileDirname}/${fileBasenameNoExtension}"
             ],

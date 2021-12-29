@@ -5,6 +5,7 @@
 #include "../includes/common/inc.h"
 #include "../headers/time_handler.h"
 #include "../headers/mutexed.h"
+#include "../headers/updater_checker.h"
 
 typedef pthread_t       Thread;
 
@@ -13,12 +14,32 @@ Int32 main(
     Str   argv[]
 ) {
 
-    if (!argv[1]) {
-        execvp("/home/rdwn/Documents/projs/Clocker/build/updater", INVALID_HNDL);
+    Updater checker = update_checker_new();
+    soft_assert_wrn(
+        checker != 0,
+        "Creating new update object failed!"
+    );
+
+    UpdateStatus update_check_res = update_checker_check(checker);
+    soft_assert_wrn(
+        update_check_res != US_Error,
+        "Checking for new version failed!"
+    );
+
+    if (update_check_res == US_Updatable) {
+
+        printf(
+            "Version %s is available!\nyou have version %s!\nDo you want to install it? [Y/n]", 
+            update_checker_get_new_tag(checker),
+            update_checker_get_version(checker)
+        );
+
+        Char result = fgetc(stdin);
+        if (result == '\n' || result == 'Y' || result == 'y') {
+            execvp("/home/rdwn/Documents/projs/Clocker/build/updater", INVALID_HNDL);
+        }
     }
-    else if ((strcmp(argv[1], "no-update") != 0)) {
-        execvp("/home/rdwn/Documents/projs/Clocker/build/updater", INVALID_HNDL);
-    }
+    
 
     printf("Hello!\n Wellcome to Clocker!\n");
 
@@ -44,7 +65,7 @@ Int32 main(
             break;
         }
 
-        else if (strcmp(input, "non-stop") == 0) {
+        else if (strcmp(input, "busy") == 0) {
             mutexed_change(state, gen_type(2));
         }
 
