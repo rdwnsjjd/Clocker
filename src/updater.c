@@ -1,5 +1,3 @@
-#include "../../headers/updater.h"
-
 #include <stdlib.h>
 #include <stdio.h>
 #include <pwd.h>
@@ -7,15 +5,32 @@
 #include <sys/stat.h>
 #include <dirent.h>
 
+#include "../includes/common/inc.h"
+
 typedef struct passwd Passwd;
 typedef struct stat   Stat;
 typedef struct dirent Dirnet;
+typedef UInt64 Updater;
+
+typedef enum {
+    US_Error,
+    US_NoUpdate,
+    US_Updatable
+}
+UpdateStatus;
 
 typedef struct {
     Str version;
     Str new_version;
 }
 _Updater;
+
+
+Str updater_get_conf_file(Str buff) {
+
+    Passwd* home_dir       = getpwuid(getuid());
+    sprintf(buff, "%s/%s", home_dir->pw_dir, ".clocker/clocker.conf");
+}
 
 
 Updater updater_new() {
@@ -148,7 +163,7 @@ UpdateStatus updater_check(Updater updater) {
             soft_assert_ret_id(string != INVALID_HNDL, "Allocating new string failed!");
 
             memcpy(string, available_version + last_index, len);
-            if (strcmp(_updater->version, available_version) == 0) {
+            if (strcmp(_updater->version, string) == 0) {
 
                 soft_assert_ret_id(
                     fclose(tags_file_ptr) == 0,
@@ -197,7 +212,7 @@ Bool updater_do_update(Updater updater) {
 
     printf("Updating app...\n");
 
-    Char cmd_buff[1024] = {0};
+    Char cmd_buff[2048] = {0};
     sprintf(
         cmd_buff, "wget %s/v%s  -P /root/.clocker/.new --quiet", 
         "https://api.github.com/repos/rdwnsjjd/Clocker/zipball/refs/tags",
@@ -209,7 +224,7 @@ Bool updater_do_update(Updater updater) {
         "Cannot get available version of clocker!"
     );
 
-    memset(cmd_buff, 0, 1024);
+    memset(cmd_buff, 0, 2048);
     sprintf(
         cmd_buff, "unzip -q /root/.clocker/.new/v%s -d /root/.clocker/.new/source",
         _updater->new_version
@@ -220,7 +235,7 @@ Bool updater_do_update(Updater updater) {
         "Cannot extract source file!"
     );
 
-    Char path_buff[1024] = {0};
+    Char path_buff[2048] = {0};
     sprintf(
         path_buff, "/root/.clocker/.new/v%s",
         _updater->new_version
@@ -243,16 +258,43 @@ Bool updater_do_update(Updater updater) {
 
         if (*(dir_net->d_name) != '.') {
 
-            memset(path_buff, 0, 1024);
-            getcwd(path_buff, 1024);
+            memset(path_buff, 0, 2048);
+            getcwd(path_buff, 2048);
+            strcat(path_buff, "/");
 
-            memset(cmd_buff, 0, 1024);
+            printf("%s\n", path_buff);
+
+            memset(cmd_buff, 0, 2048);
             sprintf(
-                path_buff, "cp %s/build/clocker %s",
+                cmd_buff, "cp /root/.clocker/.new/source/%s/build/clocker %s",
                 dir_net->d_name,
                 path_buff
             );
-            
+
+            soft_assert_ret_id(
+                system(cmd_buff) == 0,
+                "Coping binary failed!"
+            );
+
+            memset(path_buff, 0, 2048);
+            updater_get_conf_file(path_buff);
+
+            FILE* data_file_ptr = fopen(path_buff, "w");
+            soft_assert_ret_id(
+                data_file_ptr != INVALID_HNDL,
+                "Creating main app data file failed! (%s)",
+                strerror(errno)
+            );
+
+            fputs(_updater->new_version, data_file_ptr);
+
+            soft_assert_ret_id(
+                fclose(data_file_ptr) == 0,
+                "Closing main app data failed! (%s)",
+                strerror(errno)
+            );
+
+            break;
         }
     }
     int a = closedir(dir);
@@ -263,5 +305,49 @@ Bool updater_do_update(Updater updater) {
         "Deleting directory failed!"
     );
 
+    printf("Done!\n");
+
     return 1;
+}
+
+Void main() {
+
+    Str argv[3] = {"/home/rdwn/Documents/projs/Clocker/build/clocker", "no-update", INVALID_HNDL};
+
+    Updater updater = updater_new();
+    soft_assert_wrn(
+        updater != 0,
+        "Creating new update object failed!"
+    );
+
+    UpdateStatus update_res = updater_check(updater);
+    soft_assert_wrn(
+        update_res != US_Error,
+        "Checking for new version failed!"
+    );
+
+    if (update_res == US_Updatable) {
+        printf(
+            "Version %s is available!\nDo you wanfasdfast to install it? [Y/n]", 
+            updater_get_new_tag(updater)
+        );
+
+        Char result = fgetc(stdin);
+        if (result == '\n' || result == 'Y' || result == 'y') {
+            updater_do_update(updater);
+            execvp("/home/rdwn/Documents/projs/Clocker/clocker", INVALID_HNDL);
+            return;
+        }
+        else {
+            printf("Aborted!\n\n");
+            execvp("/home/rdwn/Documents/projs/Clocker/build/clocker", argv);
+            perror("");
+            return;
+        }
+    }
+
+
+    execvp("/home/rdwn/Documents/projs/Clocker/build/clocker", argv);
+            perror("");
+    return;
 }
