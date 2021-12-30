@@ -1,27 +1,29 @@
-component := src/components/listener.c
-component += src/components/mutexed.c
-component += src/components/time_handler.c
-component += src/components/timer.c
-component += src/components/update_checker.c
+current = $(shell dirname $(realpath $(firstword $(MAKEFILE_LIST))))
 
-clocker := src/clocker.c
-updater := src/updater.c
+component := ${current}/src/components/listener.c
+component += ${current}/src/components/mutexed.c
+component += ${current}/src/components/time_handler.c
+component += ${current}/src/components/timer.c
+component += ${current}/src/components/update_checker.c
 
-buildClocker := build/clocker
-buildUpdater := build/updater
+clocker := ${current}/src/clocker.c
+updater := ${current}/src/updater.c
 
-build: 
-	@mkdir -p build
+buildClocker := ${current}/build/clocker
+buildUpdater := ${current}/build/updater
+
+all: 
+	@mkdir -p ${current}/build
 	@gcc -w -g ${component} ${clocker} -o ${buildClocker} -lpthread
-	@gcc -w -g ${updater} src/components/update_checker.c -o ${buildUpdater} -lpthread
+	@gcc -w -g ${updater} ${current}/src/components/update_checker.c -o ${buildUpdater} -lpthread
 
 install: 
 	@mkdir -p /root/.clocker
-	@gcc -w -g ${component} ${clocker} -o /bin/clocker
-	@gcc -w -g ${updater} src/components/update_checker.c -o /root/.clocker/clocker-updater
+	@gcc -w -g ${component} ${clocker} -o /bin/clocker  -lpthread
+	@gcc -w -g ${updater} ${current}/src/components/update_checker.c -o /root/.clocker/clocker-updater  -lpthread
 
 run:
-	@sudo ./${buildClocker}
+	@sudo ${buildClocker}
 
 
 uninstall:

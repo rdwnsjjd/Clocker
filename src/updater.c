@@ -84,7 +84,19 @@ Bool updater_do_update(Updater updater) {
 
             memset(cmd_buff, 0, 2048);
             sprintf(
-                cmd_buff, "cp /root/.clocker/.new/source/%s/build/clocker /bin/clocker",
+                cmd_buff, "make --file=/root/.clocker/.new/source/%s/makefile all",
+                dir_net->d_name
+            );
+
+            soft_assert_ret_id(
+                system(cmd_buff) == 0,
+                "Coping binary failed!"
+            );
+
+            memset(cmd_buff, 0, 2048);
+            sprintf(
+                cmd_buff, 
+                "cp /root/.clocker/.new/source/%s/build/clocker /bin/clocker",
                 dir_net->d_name
             );
 

@@ -2,17 +2,17 @@
     "tasks": [
         {
             "type": "cppbuild",
-            "label": "C/C++: gcc-11 build active file",
-            "command": "/usr/bin/gcc-11",
+            "label": "C/C++: gcc-10 build active file",
+            "command": "/usr/bin/gcc-10",
             "args": [
                 "-fdiagnostics-color=always",
                 "-g",
                 "${file}",
-                "/home/user/Clocker/src/components/listener.c",
-                "/home/user/Clocker/src/components/timer.c",
-                "/home/user/Clocker/src/components/time_handler.c",
-                "/home/user/Clocker/src/components/mutexed.c",
-                "/home/user/Clocker/src/components/update_checker.c",
+                "/home/rdwn/Documents/Clocker/src/components/listener.c",
+                "/home/rdwn/Documents/Clocker/src/components/timer.c",
+                "/home/rdwn/Documents/Clocker/src/components/time_handler.c",
+                "/home/rdwn/Documents/Clocker/src/components/mutexed.c",
+                "/home/rdwn/Documents/Clocker/src/components/update_checker.c",
                 "-o",
                 "${fileDirname}/${fileBasenameNoExtension}"
             ],
