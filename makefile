@@ -12,8 +12,8 @@ buildUpdater := build/updater
 
 build: 
 	@mkdir -p build
-	@gcc -w -g ${component} ${clocker} -o ${buildClocker}
-	@gcc -w -g ${updater} src/components/update_checker.c -o ${buildUpdater}
+	@gcc -w -g ${component} ${clocker} -o ${buildClocker} -lpthread
+	@gcc -w -g ${updater} src/components/update_checker.c -o ${buildUpdater} -lpthread
 
 install: 
 	@mkdir -p /root/.clocker
