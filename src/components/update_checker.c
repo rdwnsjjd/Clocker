@@ -52,7 +52,7 @@ Updater update_checker_new() {
             strerror(errno)
         );
 
-        fputs("0.0-beta.5", data_file_ptr);
+        fputs("0.1-beta.0", data_file_ptr);
     }
 
     // getting data file size
