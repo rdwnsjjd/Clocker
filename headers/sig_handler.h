@@ -15,26 +15,14 @@
 // You should have received a copy of the GNU General Public License
 // along with Clocker.  If not, see <http://www.gnu.org/licenses/>.
 
-#ifndef HEDARS_MUTEX_H
-#define HEDARS_MUTEX_H
+#ifndef HEADERS_SIG_HANDLER_H
+#define HEADERS_SIG_HANDLER_H
 
+#include <signal.h>
 #include "../includes/common/inc.h"
 
-#include <pthread.h>
+typedef sig_t Sig;
 
-typedef pthread_mutex_t Mutex;
+Sig sig_handler(Int32 signal);
 
-typedef struct {
-    Mutex    mutex;
-    GenType  inner;
-}
-Mutexed;
-
-Mutexed* mutexed_new(GenType inner);
-
-Void mutexed_change(Mutexed* mutexed, GenType value);
-
-Void mutexed_destroy(Mutexed* mutexed);
-
-
-#endif // HEDARS_MUTEX_H
+#endif // HEADERS_SIG_HANDLER_H

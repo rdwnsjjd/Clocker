@@ -1,3 +1,22 @@
+/**
+ * Copyright (C) 2021 rdwn
+ * 
+ * This file is part of Clocker.
+ * 
+ * Clocker is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ * 
+ * Clocker is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ * 
+ * You should have received a copy of the GNU General Public License
+ * along with Clocker.  If not, see <http://www.gnu.org/licenses/>.
+ */
+
 #include "../../headers/timer.h"
 
 #include <stdio.h>
@@ -38,6 +57,13 @@ Void timer_pause(Timer timer) {
     Int32 res = gettimeofday(&(_timer->end), INVALID_HNDL);
 
     _timer->spend += (_timer->end.tv_sec - _timer->begin.tv_sec);
+}
+
+
+Void timer_resume(Timer timer) {
+
+    _Timer* _timer = (_Timer*) timer;
+    _timer->spend -= (_timer->end.tv_sec - _timer->begin.tv_sec);
 }
 
 

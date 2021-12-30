@@ -1,4 +1,4 @@
-// Copyright (C) 2021 rdwn
+// Copyright (C) 2021 root
 // 
 // This file is part of Clocker.
 // 
@@ -15,26 +15,11 @@
 // You should have received a copy of the GNU General Public License
 // along with Clocker.  If not, see <http://www.gnu.org/licenses/>.
 
-#ifndef HEDARS_MUTEX_H
-#define HEDARS_MUTEX_H
+#ifndef HEADERS_CMD_H
+#define HEADERS_CMD_H
 
 #include "../includes/common/inc.h"
 
-#include <pthread.h>
+Hndl cmd_run(Hndl state);
 
-typedef pthread_mutex_t Mutex;
-
-typedef struct {
-    Mutex    mutex;
-    GenType  inner;
-}
-Mutexed;
-
-Mutexed* mutexed_new(GenType inner);
-
-Void mutexed_change(Mutexed* mutexed, GenType value);
-
-Void mutexed_destroy(Mutexed* mutexed);
-
-
-#endif // HEDARS_MUTEX_H
+#endif // HEADERS_CMD_H

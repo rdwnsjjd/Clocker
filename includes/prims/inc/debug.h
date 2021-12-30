@@ -1,3 +1,20 @@
+// Copyright (C) 2021 rdwn
+// 
+// This file is part of Clocker.
+// 
+// Clocker is free software: you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
+// the Free Software Foundation, either version 3 of the License, or
+// (at your option) any later version.
+// 
+// Clocker is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU General Public License for more details.
+// 
+// You should have received a copy of the GNU General Public License
+// along with Clocker.  If not, see <http://www.gnu.org/licenses/>.
+
 #ifndef __PRIMS_INC_DEBUG_H
 #define __PRIMS_INC_DEBUG_H
 
@@ -30,7 +47,7 @@
 #define LOG_LBL "LOG"
 
 #ifndef DEBUG
-    #define _debug_msg(label_in_color_, label_color_, label_, msg_, ...)   do { printf("["COLOR_BOLD label_color_"  %s  "COLOR_RESET"]  ", label_);\
+    #define _debug_msg(label_in_color_, label_color_, label_, msg_, ...)   do { printf("\n["COLOR_BOLD label_color_"  %s  "COLOR_RESET"]  ", label_);\
                                                                             printf(label_in_color_ msg_ COLOR_RESET, ##__VA_ARGS__);\
                                                                             printf("   "COLOR_UNDERLINE COLOR_ITALIC COLOR_TRANSPARENT"at: %s %s, %s, fn: %s, ln: %d", __DATE__, __TIME__, __FILENAME__, __func__, __LINE__); \
                                                                             printf(COLOR_RESET"\n");} while(0)

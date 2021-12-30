@@ -5,7 +5,7 @@
     "version": "0.2.0",
     "configurations": [
         {
-            "name": "gcc-10 - Build and debug active file",
+            "name": "gcc-11 - Build and debug active file",
             "type": "cppdbg",
             "request": "launch",
             "program": "${fileDirname}/${fileBasenameNoExtension}",
@@ -20,15 +20,10 @@
                     "description": "Enable pretty-printing for gdb",
                     "text": "-enable-pretty-printing",
                     "ignoreFailures": true
-                },
-                {
-                    "description": "Set Disassembly Flavor to Intel",
-                    "text": "-gdb-set disassembly-flavor intel",
-                    "ignoreFailures": true
                 }
             ],
-            "preLaunchTask": "C/C++: gcc-10 build active file",
-            "miDebuggerPath": "/usr/bin/gdb"
+            "preLaunchTask": "C/C++: gcc-11 build active file",
+            "miDebuggerPath": "/bin/gdb"
         }
     ]
 }
