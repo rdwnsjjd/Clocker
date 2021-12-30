@@ -8,7 +8,7 @@ this can be used for everyone who wants to know how many time spends on his work
 ***but stop and NOTE: this is a pre-release, unstable and uncompleted version of this app!*** <br />
 but I try to complete it because of my self usage!
 
-#### How it is works?
+#### How it works?
 it simply tracks your mouse and keyboard usage on your system by reading `/dev/input/by_path` input files.
 when they become idel for 2 min, the app consider your time as "waste time" and as you come back it will continue normally.
 
