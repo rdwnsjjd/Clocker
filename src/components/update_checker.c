@@ -40,25 +40,20 @@ Updater update_checker_new() {
             "Creating main app directory failed! (%s)",
             strerror(errno)
         );
+    }
 
-        FILE* data_file_ptr = fopen(data_file, "w");
+    FILE* data_file_ptr = fopen(data_file, "r");
+    if (data_file_ptr == INVALID_HNDL) {
+
+        data_file_ptr = fopen(data_file, "w");
         soft_assert_ret_id(
             data_file_ptr != INVALID_HNDL,
             "Creating main app data file failed! (%s)",
             strerror(errno)
         );
 
-        fputs("0.0-beta.0", data_file_ptr);
-
-        soft_assert_ret_id(
-            fclose(data_file_ptr) == 0,
-            "Closing main app data failed! (%s)",
-            strerror(errno)
-        );
+        fputs("0.0-beta.5", data_file_ptr);
     }
-    
-    FILE* data_file_ptr = fopen(data_file, "r");
-    soft_assert_ret_id(data_file_ptr != INVALID_HNDL, "App data file is missed!");
 
     // getting data file size
     fseek(data_file_ptr, 0L, SEEK_END);

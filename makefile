@@ -22,3 +22,8 @@ install:
 
 run:
 	@sudo ./${buildClocker}
+
+
+uninstall:
+	@rm -rf /root/.clocker
+	@rm /bin/clocker

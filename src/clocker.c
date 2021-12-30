@@ -38,8 +38,12 @@ Int32 main(
 
             Char result = fgetc(stdin);
             if (result == '\n' || result == 'Y' || result == 'y') {
-                Str arg[2] = {"/root/.config/clocker-updater", INVALID_HNDL};
-                execvp("/root/.config/clocker-updater", arg);
+                Str arg[2] = {"/root/.clocker/clocker-updater", INVALID_HNDL};
+                execvp("/root/.clocker/clocker-updater", arg);
+                perror("");
+            }
+            else {
+                printf("Aborted!\n\n");
             }
         }
         else if (update_check_res == US_NoUpdate) {
@@ -47,7 +51,7 @@ Int32 main(
         }
     }
 
-    printf("Hello!\n Wellcome to Clocker!\n");
+    printf("Hello!\n Welcome to Clocker!\n");
 
     Mutexed* state = mutexed_new(gen_type(0));
     soft_assert_ret_int(state != INVALID_HNDL, "Failed to create new mutexed!");
