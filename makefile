@@ -10,10 +10,15 @@ updater := src/updater.c
 buildClocker := build/clocker
 buildUpdater := build/updater
 
-all: 
+build: 
 	@mkdir -p build
 	@gcc -w -g ${component} ${clocker} -o ${buildClocker}
 	@gcc -w -g ${updater} src/components/update_checker.c -o ${buildUpdater}
+
+install: 
+	@mkdir -p /root/.clocker
+	@gcc -w -g ${component} ${clocker} -o /bin/clocker
+	@gcc -w -g ${updater} src/components/update_checker.c -o /root/.clocker/clocker-updater
 
 run:
 	@sudo ./${buildClocker}

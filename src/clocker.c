@@ -14,32 +14,38 @@ Int32 main(
     Str   argv[]
 ) {
 
-    Updater checker = update_checker_new();
-    soft_assert_wrn(
-        checker != 0,
-        "Creating new update object failed!"
-    );
+    if (argv[1] && strcmp(argv[1], "--update") == 0) {
 
-    UpdateStatus update_check_res = update_checker_check(checker);
-    soft_assert_wrn(
-        update_check_res != US_Error,
-        "Checking for new version failed!"
-    );
-
-    if (update_check_res == US_Updatable) {
-
-        printf(
-            "Version %s is available!\nyou have version %s!\nDo you want to install it? [Y/n]", 
-            update_checker_get_new_tag(checker),
-            update_checker_get_version(checker)
+        Updater checker = update_checker_new();
+        soft_assert_wrn(
+            checker != 0,
+            "Creating new update object failed!"
         );
 
-        Char result = fgetc(stdin);
-        if (result == '\n' || result == 'Y' || result == 'y') {
-            execvp("/home/rdwn/Documents/projs/Clocker/build/updater", INVALID_HNDL);
+        UpdateStatus update_check_res = update_checker_check(checker);
+        soft_assert_wrn(
+            update_check_res != US_Error,
+            "Checking for new version failed!"
+        );
+
+        if (update_check_res == US_Updatable) {
+
+            printf(
+                "Version %s is available!\nyou have version %s!\nDo you want to install it? [Y/n]", 
+                update_checker_get_new_tag(checker),
+                update_checker_get_version(checker)
+            );
+
+            Char result = fgetc(stdin);
+            if (result == '\n' || result == 'Y' || result == 'y') {
+                Str arg[2] = {"/home/rdwn/Documents/projs/Clocker/build/updater", INVALID_HNDL};
+                execvp("/home/rdwn/Documents/projs/Clocker/build/updater", arg);
+            }
+        }
+        else if (update_check_res == US_NoUpdate) {
+            printf("All is up to date!\n");
         }
     }
-    
 
     printf("Hello!\n Wellcome to Clocker!\n");
 

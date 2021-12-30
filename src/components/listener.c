@@ -10,6 +10,13 @@
 #include <fcntl.h>
 #include <poll.h>
 
+#include <sys/stat.h>
+#include <dirent.h>
+
+typedef struct passwd Passwd;
+typedef struct stat   Stat;
+typedef struct dirent Dirnet;
+
 typedef  pthread_t Thread;
 
 
@@ -36,11 +43,46 @@ Listener listener_new() {
     _Listener* new = (_Listener*) malloc(sizeof(_Listener));
     soft_assert_ret_id(new, "Allocating new listener failed!");
 
-    new->keyboard.input_file = open("/dev/input/by-path/platform-i8042-serio-0-event-kbd", O_RDONLY);
-    soft_assert_ret_id(new->keyboard.input_file != -1, "Opening keyboard input file failed: %s", strerror(errno));
+    Dirnet* dir_net = {0};     
+    DIR* dir = opendir ("/dev/input/by-path");
+    soft_assert_ret_id(
+        dir != INVALID_HNDL, 
+        "Opening /dev/input/by-path/ failed! (%s)", 
+        strerror(errno)
+    );
 
-    new->mouse.input_file = open("/dev/input/by-path/pci-0000:00:14.0-usb-0:3:1.0-event-mouse", O_RDONLY);
-    soft_assert_ret_id(new->mouse.input_file != -1, "Opening mouse input file failed: %s", strerror(errno));
+    while (dir_net = readdir(dir)) {
+
+        if (*(dir_net->d_name) != '.') {
+
+            Char buff[2048] = {0};
+            sprintf(buff, "/dev/input/by-path/%s", dir_net->d_name);
+
+            if (strstr(dir_net->d_name, "event-mouse") != INVALID_HNDL) {
+                new->mouse.input_file = open(buff, O_RDONLY);
+                soft_assert_ret_id(
+                    new->mouse.input_file != -1, 
+                    "Opening mouse input file failed: %s", 
+                    strerror(errno)
+                );
+            }
+            
+            if (strstr(dir_net->d_name, "kbd") != INVALID_HNDL) {
+                new->keyboard.input_file = open(buff, O_RDONLY);
+                soft_assert_ret_id(
+                    new->keyboard.input_file != -1, 
+                    "Opening keyboard input file failed: %s", 
+                    strerror(errno)
+                );
+            }
+        }
+    }
+
+    soft_assert_ret_id(
+        closedir(dir) == 0,
+        "Closing directory failed! (%s)",
+        strerror(errno)
+    );
 
     new->keyboard.fired = True;
     new->mouse.fired    = True;
