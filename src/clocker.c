@@ -38,8 +38,8 @@ Int32 main(
 
             Char result = fgetc(stdin);
             if (result == '\n' || result == 'Y' || result == 'y') {
-                Str arg[2] = {"/home/rdwn/Documents/projs/Clocker/build/updater", INVALID_HNDL};
-                execvp("/home/rdwn/Documents/projs/Clocker/build/updater", arg);
+                Str arg[2] = {"/root/.config/clocker-updater", INVALID_HNDL};
+                execvp("/root/.config/clocker-updater", arg);
             }
         }
         else if (update_check_res == US_NoUpdate) {

@@ -84,9 +84,8 @@ Bool updater_do_update(Updater updater) {
 
             memset(cmd_buff, 0, 2048);
             sprintf(
-                cmd_buff, "cp /root/.clocker/.new/source/%s/build/clocker %s",
-                dir_net->d_name,
-                path_buff
+                cmd_buff, "cp /root/.clocker/.new/source/%s/build/clocker /bin/clocker",
+                dir_net->d_name
             );
 
             soft_assert_ret_id(
@@ -133,7 +132,7 @@ Bool updater_do_update(Updater updater) {
 
 Void main() {
 
-    Str argv[2] = {"/home/rdwn/Documents/projs/Clocker/build/clocker", INVALID_HNDL};
+    Str argv[2] = {"/bin/clocker", INVALID_HNDL};
 
     Updater checker = update_checker_new();
     soft_assert_wrn(
@@ -148,6 +147,6 @@ Void main() {
     );
 
     updater_do_update(checker);
-    execvp("/home/rdwn/Documents/projs/Clocker/clocker", argv);
+    execvp("/bin/clocker", argv);
     return;
 }
