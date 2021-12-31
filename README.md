@@ -17,6 +17,8 @@
  along with Clocker.  If not, see <http://www.gnu.org/licenses/>.
 -->
 
+![GitHub release (latest SemVer including pre-releases)](https://img.shields.io/github/v/release/rdwnsjjd/Clocker?include_prereleases)
+
 ### Clocker
 #### A useful time calculator!
 this app is created by me for my own usage. but you also if have any need or was useful, can use it.
