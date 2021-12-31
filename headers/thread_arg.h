@@ -19,7 +19,46 @@
 #define HEADERS_ENV_H
 
 #include "../includes/common/inc.h"
+#include "../headers/mutexed.h"
+
+typedef enum {
+    TM_Default,
+    TM_Busy,
+    TM_Paused
+}
+TimeMode;
+
+typedef enum {
+    TC_None,
+    TC_End,
+    TC_Report,
+    TC_Pause,
+    TC_Resume
+}
+TimeCommand;
+
+typedef struct {
+    Str      version;
+    Mutexed* mode;
+    Mutexed* command;
+}
+TreadArg;
 
 
+INLINE Str time_mode_from(TimeMode mode) {
+    switch (mode) {
+        case TM_Default:
+            return "default";
+
+        case TM_Busy:
+            return "busy";
+
+        case TM_Paused:
+            return WRN_TXT("paused");
+        
+        default:
+            return "";
+    }
+}
 
 #endif // HEADERS_ENV_H

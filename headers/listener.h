@@ -19,6 +19,7 @@
 #define HEADERS_LISTENER_H
 
 #include "../includes/common/inc.h"
+#include "../common/defs.h"
 
 typedef UInt64 Listener;
 

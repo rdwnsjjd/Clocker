@@ -37,9 +37,9 @@ it simply tracks your mouse and keyboard usage on your system by reading `/dev/i
 when they become idle for 2 min, the app considers your time as "waste time" and as you come back it will continue normally.
 
 #### How to use it?
-You can directly use the `/build/clocker` binary file by copying it to the `/bin` system directory.
+You can directly use the `/build/clocker` binary file by copying it to the `/usr/bin` system directory.
 or make source easily by running `make && make install` in the root directory of the project (recommended).
-it will copy `clocker` to `/bin` and clocker updater to `/root/.clocker`.
+it will copy `clocker` and `clocker updater` to `/usr/bin`.
 for run clocker run:
 ```
 $ sudo clocker

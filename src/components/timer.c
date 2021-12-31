@@ -36,7 +36,7 @@ _Timer;
 
 Timer timer_new() {
     _Timer* new_timer = (_Timer*) malloc(sizeof(_Timer));
-    soft_assert_ret_ptr(new_timer, "Allocating new timer failed!");
+    soft_assert_ret_id(new_timer, "Allocating new timer failed!");
 
     new_timer->begin = (TimeEval) {0};
     new_timer->end   = (TimeEval) {0};

@@ -19,6 +19,7 @@
 #define HEADERS_CMD_H
 
 #include "../includes/common/inc.h"
+#include "../headers/mutexed.h"
 
 Hndl cmd_run(Hndl state);
 

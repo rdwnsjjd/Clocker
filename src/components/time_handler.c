@@ -32,21 +32,21 @@ Void time_print(UInt64 main_timer) {
     UInt64 total_waste_time = total_time - total_final_time;
 
     printf(
-        "The total time is => %ld:%ld:%ld\n", 
+        " The "BOLD_TXT("total")" time is " TRANSPARENT_TXT("=>") INF_TXT(" %ld:%ld:%ld\n"), 
         total_time / 3600,
         (total_time % 3600) / 60,
         (total_time % 60)
     );
 
     printf(
-        "The total waste time is => %ld:%ld:%ld\n", 
+        " The "BOLD_TXT("waste")" time is " TRANSPARENT_TXT("=>") DNG_TXT(" %ld:%ld:%ld\n"), 
         total_waste_time / 3600,
         (total_waste_time % 3600) / 60,
         (total_waste_time % 60)
     );
     
     printf(
-        "The final time is => %ld:%ld:%ld\n", 
+        " The "BOLD_TXT("final")" time is " TRANSPARENT_TXT("=>") ATT_TXT(" %ld:%ld:%ld\n"), 
         total_final_time / 3600,
         (total_final_time % 3600) / 60,
         (total_final_time % 60)
@@ -56,7 +56,11 @@ Void time_print(UInt64 main_timer) {
 
 Hndl time_handle(Void* arg) {
 
-    Mutexed* state = (Mutexed*) arg;
+    
+    TreadArg* cmd_arg = (TreadArg*) arg;
+    Mutexed*  command = cmd_arg->command;
+    Mutexed*  mode    = cmd_arg->mode;
+    Str       version = cmd_arg->version;
 
     // starting temperory timer for calculating waste time
     Timer tmp_timer = timer_new();
@@ -74,46 +78,77 @@ Hndl time_handle(Void* arg) {
         _exit(-1);
     }
 
+    Bool is_paused = False;
     do {
-        // temperory timer start 
-        timer_start(tmp_timer);
-        
-        // listen to keyboard-mouse events
-        listener_listen(listener);
-        
-        // temperory timer pause
-        timer_pause(tmp_timer);
 
-        // calculating waste time
-        UInt64 waste_time = timer_time_spend(tmp_timer);
-        if (waste_time > 120 && state->inner.i32 != 2) {
-            // if waste time was more than 2 min, reducing main time
-            timer_reduce(main_timer, waste_time);
+        // calculating time if is in paused mode
+        if (is_paused) {
+            timer_reduce(main_timer, 1);
+        }
+
+        // calculating time if is in normal mode
+        else {
+            // temperory timer start 
+            timer_start(tmp_timer);
+            
+            // listen to keyboard-mouse events
+            listener_listen(listener);
+            
+            // temperory timer pause
+            timer_pause(tmp_timer);
+
+            // calculating waste time
+            UInt64 waste_time = timer_time_spend(tmp_timer);
+            if (waste_time > 120 && 
+                mode->inner.i32 != TM_Busy &&
+                !is_paused
+            ) {
+                // if waste time was more than 2 min, reducing main time
+                timer_reduce(main_timer, waste_time);
+            }
+
+            // reset temperory timer
+            timer_reset(tmp_timer);
         }
 
         // get report
-        if (state->inner.i32 == 3) {
+        if (command->inner.i64 == TC_Report) {
             // first pause main timer
             timer_pause(main_timer);
-
+            
             // print time
             time_print(main_timer);
 
-            // reset state
-            mutexed_change(state, gen_type(0));
+            // reset command
+            mutexed_change(command, gen_type(TC_None));
 
             // resume main timer
             timer_resume(main_timer);
         }
 
-        // reset temperory timer
-        timer_reset(tmp_timer);
+        // pause time start
+        if (command->inner.i64 == TC_Pause) {
+
+            // reset command
+            mutexed_change(command, gen_type(TC_None));
+
+            is_paused = True;
+        }
+
+        // pause time end
+        if (command->inner.i64 == TC_Resume) {
+
+            // reset command
+            mutexed_change(command, gen_type(TC_None));
+
+            is_paused = False;
+        }
 
         // wait for 1 sec
         sleep(1);
         
     // while listener is fired or program is not terminated, continue
-    } while (state->inner.i32 != 1);
+    } while (command->inner.i32 != TC_End);
 
     // outside of the loop, the main time is over!
     timer_stop(main_timer);

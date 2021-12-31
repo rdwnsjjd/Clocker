@@ -22,7 +22,7 @@
 #include <string.h>
 #include <signal.h>
 
-#include "../common/info.h"
+#include "../common/defs.h"
 #include "../includes/common/inc.h"
 #include "../headers/time_handler.h"
 #include "../headers/mutexed.h"
@@ -33,12 +33,7 @@
 typedef pthread_t       Thread;
 
 
-Void clocker_update_checking() {
-    Updater checker = update_checker_new();
-    soft_assert_wrn(
-        checker != 0,
-        "Creating new update object failed!"
-    );
+Void clocker_update_checking(Updater checker) {
 
     UpdateStatus update_check_res = update_checker_check(checker);
     soft_assert_wrn(
@@ -54,8 +49,8 @@ Void clocker_update_checking() {
 
         Char result = fgetc(stdin);
         if (result == '\n' || result == 'Y' || result == 'y') {
-            Str arg[2] = {"/root/.clocker/clocker-updater", INVALID_HNDL};
-            execvp("/root/.clocker/clocker-updater", arg);
+            Str arg[3] = {"/usr/bin/clocker-updater", "--from-clocker", INVALID_HNDL};
+            execvp("/usr/bin/clocker-updater", arg);
             perror("");
         }
         else {
@@ -74,18 +69,32 @@ Int32 main(
 ) {
 
     // signal handling
-    signal(SIGINT, sig_handler);
-    signal(SIGSEGV, sig_handler);
+    signal(SIGINT, signal_handler);
+    signal(SIGSEGV, signal_handler);
+
+
+    Updater checker = update_checker_new();
+    soft_assert_wrn(
+        checker != 0,
+        "Creating new update object failed!"
+    );
 
     if (argv[1] && strcmp(argv[1], "--update") == 0) {
-        clocker_update_checking();
+        clocker_update_checking(checker);
     }
 
-    printf("%s\n\n", clocker_banner);
-    printf("Type "COLOR_ITALIC"`help`"COLOR_RESET" to list supported commands\n");
 
-    Mutexed* state = mutexed_new(gen_type(0));
-    soft_assert_ret_int(state != INVALID_HNDL, "Failed to create new mutexed!");
+    printf("%s\n\n", CLOCKER_BANNER);
+    printf("Type "ITALIC_TXT("`help`")" to list supported commands\n");
+
+    TreadArg thread_arg = (TreadArg) {
+        .command = mutexed_new(gen_type(TC_None)),
+        .mode    = mutexed_new(gen_type(TM_Default)),
+        .version = update_checker_get_version(checker)
+    };
+    soft_assert_ret_int(thread_arg.command != INVALID_HNDL, "Failed to create new mutexed!");
+    soft_assert_ret_int(thread_arg.mode    != INVALID_HNDL, "Failed to create new mutexed!");
+
 
     // creating time handling thread
     Thread timer_thread = 0;
@@ -93,7 +102,7 @@ Int32 main(
         &timer_thread, 
         INVALID_HNDL, 
         time_handle, 
-        (Hndl) state
+        (Hndl) &thread_arg
     );
 
     // creating cmd handling thread
@@ -102,7 +111,7 @@ Int32 main(
         &cmd_thread, 
         INVALID_HNDL, 
         cmd_run, 
-        (Hndl) state
+        (Hndl) &thread_arg
     );
 
     // waiting for time thread

@@ -39,6 +39,12 @@
 #define COLOR_CYAN    "\x1b[36m"
 #define COLOR_RESET   "\x1b[0m"
 
+#define COLOR_B_RED     "\x1b[91m"
+#define COLOR_B_GREEN   "\x1b[92m"
+#define COLOR_B_YELLOW  "\x1b[93m"
+#define COLOR_B_BLUE    "\x1b[94m"
+#define COLOR_B_CYAN    "\x1b[96m"
+
 #define __FILENAME__        (strrchr(__FILE__, '/') ? strrchr(__FILE__, '/') + 1 : __FILE__)  
 
 #define ERR_LBL "ERR"

@@ -19,6 +19,7 @@
 #define HEADERS_TIME_HANDLE_H
 
 #include "../includes/common/inc.h"
+#include "../headers/thread_arg.h"
 
 Hndl time_handle(Void* arg);
 

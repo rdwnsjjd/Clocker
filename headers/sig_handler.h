@@ -20,9 +20,10 @@
 
 #include <signal.h>
 #include "../includes/common/inc.h"
+#include "../common/defs.h"
 
 typedef sig_t Sig;
 
-Sig sig_handler(Int32 signal);
+Void signal_handler(Int32 signal);
 
 #endif // HEADERS_SIG_HANDLER_H

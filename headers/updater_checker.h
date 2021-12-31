@@ -21,6 +21,7 @@
 #define HEADERS_UPDATECHRCKER_H
 
 #include "../includes/common/inc.h"
+#include "../common/defs.h"
 
 typedef enum {
     US_Error,

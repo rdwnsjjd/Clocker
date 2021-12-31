@@ -29,22 +29,25 @@ clocker := ${current}/src/clocker.c
 updater := ${current}/src/updater.c
 
 buildClocker := ${current}/build/clocker
-buildUpdater := ${current}/build/updater
+buildUpdater := ${current}/build/clocker-updater
 
 all: 
 	@mkdir -p ${current}/build
-	@gcc -w -g ${component} ${clocker} -o ${buildClocker} -lpthread
-	@gcc -w -g ${updater} ${current}/src/components/update_checker.c -o ${buildUpdater} -lpthread
+	@gcc -fcompare-debug-second -w -g ${component} ${clocker} -o ${buildClocker} -lpthread
+	@gcc -fcompare-debug-second -w -g ${updater} ${current}/src/components/update_checker.c -o ${buildUpdater} -lpthread
 
 install: 
-	@mkdir -p /root/.clocker
-	@gcc -w -g ${component} ${clocker} -o /bin/clocker  -lpthread
-	@gcc -w -g ${updater} ${current}/src/components/update_checker.c -o /root/.clocker/clocker-updater  -lpthread
+	@mkdir -p /root/.config/clocker
+	@cp ${buildClocker} /usr/bin
+	@cp ${buildUpdater} /usr/bin
 
 run:
 	@sudo ${buildClocker}
 
+clean:
+	@rm -rf ${current}/build/
 
 uninstall:
-	@rm -rf /root/.clocker
-	@rm /bin/clocker
+	@rm -rf /root/.config/clocker
+	@rm /usr/bin/clocker
+	@rm /usr/bin/clocker-updater

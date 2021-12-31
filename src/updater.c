@@ -41,7 +41,7 @@ _Updater;
 Str updater_get_conf_file(Str buff) {
 
     Passwd* home_dir       = getpwuid(getuid());
-    sprintf(buff, "%s/%s", home_dir->pw_dir, ".clocker/clocker.conf");
+    sprintf(buff, "%s/%s", home_dir->pw_dir, ".config/clocker/clocker.conf");
 }
 
 
@@ -53,7 +53,7 @@ Bool updater_do_update(Updater updater) {
 
     Char cmd_buff[2048] = {0};
     sprintf(
-        cmd_buff, "wget %s/v%s  -P /root/.clocker/.new --quiet", 
+        cmd_buff, "wget %s/v%s  -P /root/.config/clocker/.new --quiet", 
         "https://api.github.com/repos/rdwnsjjd/Clocker/zipball/refs/tags",
         _updater->new_version
     );
@@ -65,7 +65,7 @@ Bool updater_do_update(Updater updater) {
 
     memset(cmd_buff, 0, 2048);
     sprintf(
-        cmd_buff, "unzip -q /root/.clocker/.new/v%s -d /root/.clocker/.new/source",
+        cmd_buff, "unzip -q /root/.config/clocker/.new/v%s -d /root/.config/clocker/.new/source",
         _updater->new_version
     );
 
@@ -76,7 +76,7 @@ Bool updater_do_update(Updater updater) {
 
     Char path_buff[2048] = {0};
     sprintf(
-        path_buff, "/root/.clocker/.new/v%s",
+        path_buff, "/root/.config/clocker/.new/v%s",
         _updater->new_version
     );
 
@@ -86,7 +86,7 @@ Bool updater_do_update(Updater updater) {
     );
 
     Dirnet* dir_net = {0};     
-    DIR* dir = opendir ("/root/.clocker/.new/source");
+    DIR* dir = opendir ("/root/.config/clocker/.new/source");
     soft_assert_ret_id(
         dir != INVALID_HNDL, 
         "Opening source directory failed! (%s)", 
@@ -103,7 +103,7 @@ Bool updater_do_update(Updater updater) {
 
             memset(cmd_buff, 0, 2048);
             sprintf(
-                cmd_buff, "make --file=/root/.clocker/.new/source/%s/makefile all && clear",
+                cmd_buff, "make --file=/root/.config/clocker/.new/source/%s/makefile all && clear",
                 dir_net->d_name
             );
 
@@ -115,7 +115,7 @@ Bool updater_do_update(Updater updater) {
             memset(cmd_buff, 0, 2048);
             sprintf(
                 cmd_buff, 
-                "cp /root/.clocker/.new/source/%s/build/clocker /bin/clocker",
+                "cp /root/.config/clocker/.new/source/%s/build/clocker /usr/bin/clocker",
                 dir_net->d_name
             );
 
@@ -135,6 +135,7 @@ Bool updater_do_update(Updater updater) {
             );
 
             fputs(_updater->new_version, data_file_ptr);
+            memcpy(_updater->version, _updater->new_version, strlen(_updater->new_version));
 
             soft_assert_ret_id(
                 fclose(data_file_ptr) == 0,
@@ -153,7 +154,7 @@ Bool updater_do_update(Updater updater) {
     );
 
     soft_assert_ret_id(
-        system("rm -rf /root/.clocker/.new") == 0,
+        system("rm -rf /root/.config/clocker/.new") == 0,
         "Deleting directory failed!"
     );
 
@@ -161,9 +162,18 @@ Bool updater_do_update(Updater updater) {
     return 1;
 }
 
-Void main() {
+Void main(
+    Int32 argc,
+    Str   args[]
+) {
 
-    Str argv[2] = {"/bin/clocker", INVALID_HNDL};
+    if (!args[1] || (strcmp(args[1], "--from-clocker") != 0)) {
+        printf(COLOR_IN_YELLOW"WARNING"COLOR_RESET WRN_TXT(": Running updater directly not recommended.\n"));
+        printf("Please use: "TRANSPARENT_TXT("clocker --update\n"));
+        return -1;
+    }
+
+    Str argv[2] = {"/usr/bin/clocker", INVALID_HNDL};
 
     Updater checker = update_checker_new();
     soft_assert_wrn(
@@ -178,6 +188,6 @@ Void main() {
     );
 
     updater_do_update(checker);
-    execvp("/bin/clocker", argv);
+    execvp("/usr/bin/clocker", argv);
     return;
 }

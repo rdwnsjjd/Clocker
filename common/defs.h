@@ -15,12 +15,14 @@
 // You should have received a copy of the GNU General Public License
 // along with Clocker.  If not, see <http://www.gnu.org/licenses/>.
 
-#ifndef COMMON_INFO_H
-#define COMMON_INFO_H
+#ifndef COMMON_DEFS_H
+#define COMMON_DEFS_H
 
 #include "../includes/common/inc.h"
 
-Str clocker_banner = COLOR_TRANSPARENT"\n"\
+#define INIT_VERSION "0.2-beta.0"
+
+#define CLOCKER_BANNER  COLOR_TRANSPARENT"\n"\
 "   █████████  ████                    █████\n" \
 "  ███░░░░░███░░███                   ░░███\n" \
 " ███     ░░░  ░███   ██████   ██████  ░███ █████  ██████  ████████\n" \
@@ -28,6 +30,19 @@ Str clocker_banner = COLOR_TRANSPARENT"\n"\
 "░███          ░███ ░███ ░███░███ ░░░  ░██████░  ░███████  ░███ ░░░\n" \
 "░░███     ███ ░███ ░███ ░███░███  ███ ░███░░███ ░███░░░   ░███\n" \
 " ░░█████████  █████░░██████ ░░██████  ████ █████░░██████  █████\n" \
-"  ░░░░░░░░░  ░░░░░  ░░░░░░   ░░░░░░  ░░░░ ░░░░░  ░░░░░░  ░░░░░\n"COLOR_RESET;
+"  ░░░░░░░░░  ░░░░░  ░░░░░░   ░░░░░░  ░░░░ ░░░░░  ░░░░░░  ░░░░░\n"COLOR_RESET
 
-#endif // COMMON_INFO_H
+
+#define ERR_TXT(txt_)           COLOR_RED          txt_ COLOR_RESET 
+#define WRN_TXT(txt_)           COLOR_YELLOW       txt_ COLOR_RESET 
+#define OK_TXT(txt_)            COLOR_GREEN        txt_ COLOR_RESET
+#define INF_TXT(txt_)           COLOR_B_CYAN         txt_ COLOR_RESET
+
+#define DNG_TXT(txt_)           COLOR_B_RED          txt_ COLOR_RESET 
+#define ATT_TXT(txt_)           COLOR_B_YELLOW       txt_ COLOR_RESET 
+
+#define TRANSPARENT_TXT(txt_)   COLOR_TRANSPARENT  txt_ COLOR_RESET
+#define BOLD_TXT(txt_)          COLOR_BOLD         txt_ COLOR_RESET
+#define ITALIC_TXT(txt_)        COLOR_ITALIC       txt_ COLOR_RESET
+
+#endif // COMMON_DEFS_H

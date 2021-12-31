@@ -24,7 +24,7 @@
 Mutexed* mutexed_new(GenType inner) {
 
     Mutexed* new = (Mutexed*) malloc(sizeof(Mutexed));
-    soft_assert_ret_void(new != INVALID_HNDL, "Allocating new mutexed failed!");
+    soft_assert_ret_ptr(new != INVALID_HNDL, "Allocating new mutexed failed!");
 
     new->mutex = (Mutex) {0};
     new->inner = inner;

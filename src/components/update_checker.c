@@ -46,8 +46,8 @@ Updater update_checker_new() {
     Char    data_file[128] = {0};
     Stat    stat_var       = {0};
 
-    sprintf(data_dir, "%s/%s", home_dir->pw_dir, ".clocker");
-    sprintf(data_file, "%s/%s", home_dir->pw_dir, ".clocker/clocker.conf");
+    sprintf(data_dir, "%s/%s", home_dir->pw_dir, ".config/clocker");
+    sprintf(data_file, "%s/%s", home_dir->pw_dir, ".config/clocker/clocker.conf");
 
     if (
         !(stat(data_dir, &stat_var) == 0 &&
@@ -61,6 +61,7 @@ Updater update_checker_new() {
         );
     }
 
+    Size data_file_size = 0;
     FILE* data_file_ptr = fopen(data_file, "r");
     if (data_file_ptr == INVALID_HNDL) {
 
@@ -71,18 +72,24 @@ Updater update_checker_new() {
             strerror(errno)
         );
 
-        fputs("0.1-beta.0", data_file_ptr);
+        fputs(INIT_VERSION, data_file_ptr);
+        data_file_size = strlen(INIT_VERSION);
+
+        new->version = (Str) malloc(sizeof(Char) * data_file_size);
+        soft_assert_ret_id(new->version != INVALID_HNDL, "Allocating new string failed!");
+        memcpy(new->version, INIT_VERSION, data_file_size);
     }
 
-    // getting data file size
-    fseek(data_file_ptr, 0L, SEEK_END);
-    Size data_file_size = ftell(data_file_ptr);
-    fseek(data_file_ptr, 0L, SEEK_SET);
+    else {
+        // getting data file size
+        fseek(data_file_ptr, 0L, SEEK_END);
+        data_file_size = ftell(data_file_ptr);
+        fseek(data_file_ptr, 0L, SEEK_SET);
 
-    new->version = (Str) malloc(sizeof(Char) * data_file_size);
-    soft_assert_ret_id(new->version != INVALID_HNDL, "Allocating new string failed!");
-    // fgets(d, 10, data_file_ptr);
-    fscanf(data_file_ptr, "%s", new->version);
+        new->version = (Str) malloc(sizeof(Char) * data_file_size);
+        soft_assert_ret_id(new->version != INVALID_HNDL, "Allocating new string failed!");
+        fscanf(data_file_ptr, "%s", new->version);
+    }
 
     soft_assert_ret_id(
         fclose(data_file_ptr) == 0,
@@ -99,11 +106,11 @@ UpdateStatus update_checker_check(Updater updater) {
     _Updater* _updater = (_Updater*) updater;
 
     soft_assert_ret_id(
-        system("wget https://api.github.com/repos/rdwnsjjd/clocker/tags -P /root/.clocker/.tags --quiet") == 0,
+        system("wget https://api.github.com/repos/rdwnsjjd/clocker/tags -P /root/.config/clocker/.tags --quiet") == 0,
         "Cannot get available version of clocker!"
     );
 
-    FILE* tags_file_ptr = fopen("/root/.clocker/.tags/tags", "r");
+    FILE* tags_file_ptr = fopen("/root/.config/clocker/.tags/tags", "r");
     soft_assert_ret_id(tags_file_ptr != INVALID_HNDL, "Tag file is missed!");
 
     // getting tags file size
@@ -158,7 +165,7 @@ UpdateStatus update_checker_check(Updater updater) {
                 );
 
                 soft_assert_ret_id(
-                    remove("/root/.clocker/.tags/tags") == 0,
+                    remove("/root/.config/clocker/.tags/tags") == 0,
                     "Deleting tags file failed (%s)",
                     strerror(errno)
                 );
@@ -177,7 +184,7 @@ UpdateStatus update_checker_check(Updater updater) {
                 );
 
                 soft_assert_ret_id(
-                    remove("/root/.clocker/.tags/tags") == 0,
+                    remove("/root/.config/clocker/.tags/tags") == 0,
                     "Deleting tags file failed (%s)",
                     strerror(errno)
                 );

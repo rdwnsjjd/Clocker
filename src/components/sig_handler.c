@@ -21,23 +21,15 @@
 #include "../../headers/sig_handler.h"
 
 
-Sig sig_handler(Int32 signal) {
+Void signal_handler(Int32 signal) {
 
     switch (signal) {
 
         case SIGINT:
-
-            // printf(COLOR_YELLOW"\nYou are about exiting app. All times will be lost. "COLOR_RESET COLOR_BOLD"Are you sure?[y/N]"COLOR_RESET);
-            // Char input_int = fgetc(stdin);fgetc(stdin);
-
-            // if (input_int == 'y' || input_int == 'Y') {
-            //     _exit(1);
-            // }
-            // printf("\n\n> ");
             break;
 
         case SIGSEGV:
-            printf(COLOR_RED"\n\nSignal 11 (SEGV) was caught by Clocker,\n"COLOR_RESET \
+            printf(ERR_TXT("\n\nSignal 11 (SEGV) was caught by Clocker,\n") \
 	                "Please send bug reports to <rdwnsjjd@gmail.org>\n");
             _exit(-1);
         default:
