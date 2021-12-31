@@ -26,7 +26,7 @@
 #### A useful time calculator!
 this app is created by me for my own usage. but you also if have any need or was useful, can use it.
 
-this a useful time calculator. this app calculate your on-work time and get a simple report of your time spend.
+this a useful time calculator. this app calculate your on-work time and gives a simple report of your time spend.
 this can be used for everyone who wants to know how many time spends on his work, parents for controlling their child PC time usage and employees who wants to report true time of their work and others.
 
 ***but stop and NOTE: this is a pre-release, unstable and uncompleted version of this app!*** <br />
