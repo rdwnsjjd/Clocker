@@ -136,7 +136,7 @@ Void listener_listen(Listener listener) {
         if (poll_num == 0) {
             Char dot_cont[32] = {0};
             if (counter >= 120) {
-                sprintf(dot_cont, "\r"COLOR_TRANSPARENT"idel (%lds)"COLOR_RESET" > ", counter - 120);
+                sprintf(dot_cont, "\r"COLOR_TRANSPARENT"idle (%lds)"COLOR_RESET" > ", counter - 120);
                 write(STDOUT_FILENO, "                               ", 32);
                 write(STDOUT_FILENO, dot_cont, 32);
             }

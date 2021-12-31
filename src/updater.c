@@ -103,7 +103,7 @@ Bool updater_do_update(Updater updater) {
 
             memset(cmd_buff, 0, 2048);
             sprintf(
-                cmd_buff, "make --file=/root/.clocker/.new/source/%s/makefile all",
+                cmd_buff, "make --file=/root/.clocker/.new/source/%s/makefile all && clear",
                 dir_net->d_name
             );
 
