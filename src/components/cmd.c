@@ -92,10 +92,10 @@ Hndl cmd_run(Hndl arg) {
             printf("\n Clocker supports these commands:\n"COLOR_TRANSPARENT \
                    COLOR_BOLD"    busy            "COLOR_RESET COLOR_TRANSPARENT COLOR_ITALIC\
                    ":I have no waste time, even when idel!\n"COLOR_RESET COLOR_TRANSPARENT\
-                   COLOR_BOLD"    default          "COLOR_RESET COLOR_TRANSPARENT COLOR_ITALIC\
+                   COLOR_BOLD"    default         "COLOR_RESET COLOR_TRANSPARENT COLOR_ITALIC\
                    ":Oh, I have some waste time, please cosider it!\n"COLOR_RESET COLOR_TRANSPARENT\
                    COLOR_BOLD"    report          "COLOR_RESET COLOR_TRANSPARENT COLOR_ITALIC\
-                   ":Get me my time to here "COLOR_YELLOW"(not implemented yet :( )\n"COLOR_RESET COLOR_TRANSPARENT\
+                   ":Get me my time to here\n"COLOR_RESET COLOR_TRANSPARENT\
                    COLOR_BOLD"    version         "COLOR_RESET COLOR_TRANSPARENT COLOR_ITALIC\
                    ":Get app version "COLOR_YELLOW"(not implemented yet :( )\n"COLOR_RESET COLOR_TRANSPARENT\
                    COLOR_BOLD"    update          "COLOR_RESET COLOR_TRANSPARENT COLOR_ITALIC\

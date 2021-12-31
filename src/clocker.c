@@ -107,5 +107,4 @@ Int32 main(
 
     // waiting for time thread
     pthread_join(timer_thread, INVALID_HNDL);
-    
 }
