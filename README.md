@@ -19,27 +19,27 @@
 
 ![GitHub release (latest SemVer including pre-releases)](https://img.shields.io/github/v/release/rdwnsjjd/Clocker?include_prereleases)
 
-![Screenshot from 2021-12-31 14-21-05](https://user-images.githubusercontent.com/84472404/147819454-e10037d4-23d8-40fb-ad68-6fda91b730e5.png)
+![Screenshot from 2021-12-31 23-01-44](https://user-images.githubusercontent.com/84472404/147837215-4aeb1700-677b-4caf-a546-ecedb4abf071.png)
 
 
 ### Clocker
 #### A useful time calculator!
-this app is created by me for my own usage. but you also if have any need or was useful, can use it.
+This app is created by me for my own usage. but you also if have any need or was useful, can use it.
 
-this is a useful time calculator. this app calculates your on-work time and gives a simple report of your time spent.
+This is a useful time calculator. this app calculates your on-work time and gives a simple report of your time spent.
 this could be used for everyone who wants to know how much time spends on his work, parents for controlling their child PC time usage, and employees who want to report true time of their work and others.
 
 ***but stop and NOTE: this is a pre-release, unstable, and uncompleted version of this app!*** <br />
 but I try to complete it because of my self-usage!
 
 #### How it works?
-it simply tracks your mouse and keyboard usage on your system by reading `/dev/input/by_path` input files.
-when they become idle for 2 min, the app considers your time as "waste time" and as you come back it will continue normally.
+It simply tracks your mouse and keyboard usage on your system by reading `/dev/input/by_path` input files.
+When they become idle for 2 min, the app considers your time as "waste time" and as you come back it will continue normally.
 
 #### How to use it?
 You can directly use the `/build/clocker` binary file by copying it to the `/usr/bin` system directory.
 or make source easily by running `make && make install` in the root directory of the project (recommended).
-it will copy `clocker` and `clocker updater` to `/usr/bin`.
+it will copy `clocker` and `clocker-updater` to `/usr/bin`.
 for run clocker run:
 ```
 $ sudo clocker
@@ -48,4 +48,46 @@ $ sudo clocker
 for updating application run:
 ```
 $ sudo clocker --update
+```
+
+
+#### Modes
+You can use several modes as your need. there are three modes: `busy`, `paused` and `default`.
+
+You are starting in default mode and it is the normal behavior of the app. Clocker will calculate your useful time when you're using your system, and otherwise, going to idle.
+
+When you're choosing `busy` mode, probably you are doing your work, but not just with your system. in other words, you are not using your system while you want to your time be considered useful time.
+
+Unlike that, when you use your system, but not in your main job, you can `pause` the Clocker and do your stuff, and then back and `Resume` it.
+
+```
+user@user:~$ sudo clocker
+
+   █████████  ████                    █████
+  ███░░░░░███░░███                   ░░███
+ ███     ░░░  ░███   ██████   ██████  ░███ █████  ██████  ████████
+░███          ░███  ███░░███ ███░░███ ░███░░███  ███░░███░░███░░███
+░███          ░███ ░███ ░███░███ ░░░  ░██████░  ░███████  ░███ ░░░
+░░███     ███ ░███ ░███ ░███░███  ███ ░███░░███ ░███░░░   ░███
+ ░░█████████  █████░░██████ ░░██████  ████ █████░░██████  █████
+  ░░░░░░░░░  ░░░░░  ░░░░░░   ░░░░░░  ░░░░ ░░░░░  ░░░░░░  ░░░░░
+
+
+Type `help` to list supported commands
+default > report                     # getting time report in default mode
+ The total time is => 0:8:53
+ The waste time is => 0:0:0
+ The final time is => 0:8:53
+default > pause                      # pausing Clocker
+ WARNING: You are using unstable feature
+paused > report                      # getting time report in paused mode
+ The total time is => 0:9:15
+ The waste time is => 0:2:13
+ The final time is => 0:8:53
+paused > resume                      # resume Clocker
+default > report                     # getting report again
+ The total time is => 0:14:45
+ The waste time is => 0:2:13
+ The final time is => 0:9:47
+default > 
 ```

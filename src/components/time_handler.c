@@ -46,7 +46,7 @@ Void time_print(UInt64 main_timer) {
     );
     
     printf(
-        " The "BOLD_TXT("final")" time is " TRANSPARENT_TXT("=>") ATT_TXT(" %ld:%ld:%ld\n"), 
+        " The "BOLD_TXT("final")" time is " TRANSPARENT_TXT("=>") OK_TXT(" %ld:%ld:%ld\n"), 
         total_final_time / 3600,
         (total_final_time % 3600) / 60,
         (total_final_time % 60)

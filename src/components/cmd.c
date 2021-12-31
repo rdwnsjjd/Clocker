@@ -97,22 +97,20 @@ Hndl cmd_run(Hndl arg) {
 
         else if (strcmp(input, "help\n") == 0 ||  (input[0] == 'h' && input[1] == '\n')) {
             printf("\n Clocker supports these commands:\n" \
-                TRANSPARENT_TXT(\
-                    BOLD_TXT("    b, busy            ")\
-                    TRANSPARENT_TXT(ITALIC_TXT( ":I have no waste time, even when idel!\n"))\
-                    BOLD_TXT("    d, default         ")\
-                    TRANSPARENT_TXT(ITALIC_TXT(":Oh, I have some waste time, please cosider it!\n"))\
-                    BOLD_TXT("    r, report          ")\
-                    TRANSPARENT_TXT(ITALIC_TXT(":Get me my time to here\n"))\
-                    BOLD_TXT("    P, pause           ")\
-                    TRANSPARENT_TXT(ITALIC_TXT(":Consider all times from now as waste ") WRN_TXT("(UNSTABLE)\n" ))\
-                    BOLD_TXT("    R, resume          ")\
-                    TRANSPARENT_TXT(ITALIC_TXT(":Resume paused mode\n"))\
-                    BOLD_TXT("    v, version         ")\
-                    TRANSPARENT_TXT(ITALIC_TXT(":Get app version \n"))\
-                    BOLD_TXT("    E, end             ")\
-                    TRANSPARENT_TXT(ITALIC_TXT(":End the program and get final report\n"))\
-                )
+                TRANSPARENT_TXT(BOLD_TXT("    b, busy            "))\
+                TRANSPARENT_TXT(ITALIC_TXT( ":I have no waste time, even when idel!\n"))\
+                TRANSPARENT_TXT(BOLD_TXT("    d, default         "))\
+                TRANSPARENT_TXT(ITALIC_TXT(":Oh, I have some waste time, please cosider it!\n"))\
+                TRANSPARENT_TXT(BOLD_TXT("    r, report          "))\
+                TRANSPARENT_TXT(ITALIC_TXT(":Get me my time to here\n"))\
+                TRANSPARENT_TXT(BOLD_TXT("    P, pause           "))\
+                TRANSPARENT_TXT(ITALIC_TXT(":Consider all times from now as waste ") WRN_TXT("(UNSTABLE)\n" ))\
+                TRANSPARENT_TXT(BOLD_TXT("    R, resume          "))\
+                TRANSPARENT_TXT(ITALIC_TXT(":Resume paused mode\n"))\
+                TRANSPARENT_TXT(BOLD_TXT("    v, version         "))\
+                TRANSPARENT_TXT(ITALIC_TXT(":Get app version \n"))\
+                TRANSPARENT_TXT(BOLD_TXT("    E, end             "))\
+                TRANSPARENT_TXT(ITALIC_TXT(":End the program and get final report\n\n"))
             );
         }
         
