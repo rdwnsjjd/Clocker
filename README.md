@@ -29,7 +29,7 @@ but I try to complete it because of my self usage!
 
 #### How it works?
 it simply tracks your mouse and keyboard usage on your system by reading `/dev/input/by_path` input files.
-when they become idel for 2 min, the app consider your time as "waste time" and as you come back it will continue normally.
+when they become idle for 2 min, the app consider your time as "waste time" and as you come back it will continue normally.
 
 #### How to use it?
 You can directly use `/build/clocker` binary file by copying it to `/bin` system directory.
