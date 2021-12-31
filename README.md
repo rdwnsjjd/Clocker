@@ -38,7 +38,7 @@ when they become idle for 2 min, the app consider your time as "waste time" and 
 
 #### How to use it?
 You can directly use `/build/clocker` binary file by copying it to `/bin` system directory.
-or make source easily by run `make build && make install` in the root directory of project.
+or make source easily by run `make && make install` in the root directory of project.
 it will copy `clocker` to `/bin` and clocker updater to `/root/.clocker`.
 for run clocker run:
 ```
