@@ -26,19 +26,19 @@
 #### A useful time calculator!
 this app is created by me for my own usage. but you also if have any need or was useful, can use it.
 
-this a useful time calculator. this app calculate your on-work time and gives a simple report of your time spend.
-this can be used for everyone who wants to know how many time spends on his work, parents for controlling their child PC time usage and employees who wants to report true time of their work and others.
+this is a useful time calculator. this app calculates your on-work time and gives a simple report of your time spent.
+this could be used for everyone who wants to know how much time spends on his work, parents for controlling their child PC time usage, and employees who want to report true time of their work and others.
 
-***but stop and NOTE: this is a pre-release, unstable and uncompleted version of this app!*** <br />
-but I try to complete it because of my self usage!
+***but stop and NOTE: this is a pre-release, unstable, and uncompleted version of this app!*** <br />
+but I try to complete it because of my self-usage!
 
 #### How it works?
 it simply tracks your mouse and keyboard usage on your system by reading `/dev/input/by_path` input files.
-when they become idle for 2 min, the app consider your time as "waste time" and as you come back it will continue normally.
+when they become idle for 2 min, the app considers your time as "waste time" and as you come back it will continue normally.
 
 #### How to use it?
-You can directly use `/build/clocker` binary file by copying it to `/bin` system directory.
-or make source easily by run `make && make install` in the root directory of project.
+You can directly use the `/build/clocker` binary file by copying it to the `/bin` system directory.
+or make source easily by running `make && make install` in the root directory of the project (recommended).
 it will copy `clocker` to `/bin` and clocker updater to `/root/.clocker`.
 for run clocker run:
 ```
