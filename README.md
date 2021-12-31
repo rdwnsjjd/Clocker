@@ -19,6 +19,9 @@
 
 ![GitHub release (latest SemVer including pre-releases)](https://img.shields.io/github/v/release/rdwnsjjd/Clocker?include_prereleases)
 
+![Screenshot from 2021-12-31 14-21-05](https://user-images.githubusercontent.com/84472404/147819454-e10037d4-23d8-40fb-ad68-6fda91b730e5.png)
+
+
 ### Clocker
 #### A useful time calculator!
 this app is created by me for my own usage. but you also if have any need or was useful, can use it.
