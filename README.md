@@ -60,34 +60,13 @@ When you're choosing `busy` mode, probably you are doing your work, but not just
 
 Unlike that, when you use your system, but not in your main job, you can `pause` the Clocker and do your stuff, and then back and `Resume` it.
 
-```
-user@user:~$ sudo clocker
+#### What will be added
+This app created because of need, So whenever the need arises, a new feature will be added. for now I want to add two more features,
+- data saver
+- data exporter
 
-   █████████  ████                    █████
-  ███░░░░░███░░███                   ░░███
- ███     ░░░  ░███   ██████   ██████  ░███ █████  ██████  ████████
-░███          ░███  ███░░███ ███░░███ ░███░░███  ███░░███░░███░░███
-░███          ░███ ░███ ░███░███ ░░░  ░██████░  ░███████  ░███ ░░░
-░░███     ███ ░███ ░███ ░███░███  ███ ░███░░███ ░███░░░   ░███
- ░░█████████  █████░░██████ ░░██████  ████ █████░░██████  █████
-  ░░░░░░░░░  ░░░░░  ░░░░░░   ░░░░░░  ░░░░ ░░░░░  ░░░░░░  ░░░░░
+if you find this app useful and feel maybe some new features is needed, please create an issue, I welcome any idea or suggestion! 
 
 
-Type `help` to list supported commands
-default > report                     # getting time report in default mode
- The total time is => 0:8:53
- The waste time is => 0:0:0
- The final time is => 0:8:53
-default > pause                      # pausing Clocker
- WARNING: You are using unstable feature
-paused > report                      # getting time report in paused mode
- The total time is => 0:9:15
- The waste time is => 0:2:13
- The final time is => 0:8:53
-paused > resume                      # resume Clocker
-default > report                     # getting report again
- The total time is => 0:14:45
- The waste time is => 0:2:13
- The final time is => 0:9:47
-default > 
-```
+also If you face any problem, unknown behavior or some other bugs, please open an issue or email me.
+rdwnsjjd@gmail.com 
