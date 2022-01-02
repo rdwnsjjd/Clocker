@@ -65,7 +65,7 @@ This app created because of need, So whenever the need arises, a new feature wil
 - data saver
 - data exporter
 
-if you use this app and feel maybe some new features is needed, please create an issue, I welcome any idea or suggestion! 
+if you find this app useful and feel maybe some new features is needed, please create an issue, I welcome any idea or suggestion! 
 
 
 also If you face any problem, unknown behavior or some other bugs, please open an issue or email me.
