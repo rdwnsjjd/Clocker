@@ -25,6 +25,8 @@ component += ${current}/src/components/update_checker.c
 component += ${current}/src/components/sig_handler.c
 component += ${current}/src/components/cmd.c
 
+header := ${current}/header
+
 clocker := ${current}/src/clocker.c
 updater := ${current}/src/updater.c
 
@@ -33,8 +35,8 @@ buildUpdater := ${current}/build/clocker-updater
 
 all: 
 	@mkdir -p ${current}/build
-	@gcc -fcompare-debug-second -w -g ${component} ${clocker} -o ${buildClocker} -lpthread
-	@gcc -fcompare-debug-second -w -g ${updater} ${current}/src/components/update_checker.c -o ${buildUpdater} -lpthread
+	@gcc -I${header} -fcompare-debug-second -w -g ${component} ${clocker} -o ${buildClocker} -lpthread
+	@gcc -I${header} -fcompare-debug-second -w -g ${updater} ${current}/src/components/update_checker.c -o ${buildUpdater} -lpthread
 
 install: 
 	@mkdir -p /root/.config/clocker

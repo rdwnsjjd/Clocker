@@ -24,13 +24,14 @@
 
 #include "../common/defs.h"
 #include "../includes/common/inc.h"
-#include "../headers/time_handler.h"
-#include "../headers/mutexed.h"
-#include "../headers/updater_checker.h"
-#include "../headers/sig_handler.h"
-#include "../headers/cmd.h"
+#include "time_handler.h"
+#include "mutexed.h"
+#include "updater_checker.h"
+#include "sig_handler.h"
+#include "data_master.h"
+#include "cmd.h"
 
-typedef pthread_t       Thread;
+typedef pthread_t Thread;
 
 
 Void clocker_update_checking(Updater checker) {
@@ -68,6 +69,20 @@ Int32 main(
     Str   argv[]
 ) {
 
+    Bool no_save = True;
+    if (argv[1] && strcmp(argv[1], "--save") == 0) {
+
+        printf(WRN_TXT("\n WARNING: you are using UNSTABLE feature!\n"\
+                "   You may face some unknown behavior or crash in app.\n"\
+                "   This feature is just for testing no for normal usage.\n"
+                "   If you face any problem, contact me\n\n"));
+
+        no_save = False;
+    }
+
+    DataMaster master = data_master_on(no_save);
+    soft_assert_ret_int(master != 0, "Failed to turning data master on!");
+
     // signal handling
     signal(SIGINT, signal_handler);
     signal(SIGSEGV, signal_handler);
@@ -90,7 +105,8 @@ Int32 main(
     TreadArg thread_arg = (TreadArg) {
         .command = mutexed_new(gen_type(TC_None)),
         .mode    = mutexed_new(gen_type(TM_Default)),
-        .version = update_checker_get_version(checker)
+        .version = update_checker_get_version(checker),
+        .master  = master
     };
     soft_assert_ret_int(thread_arg.command != INVALID_HNDL, "Failed to create new mutexed!");
     soft_assert_ret_int(thread_arg.mode    != INVALID_HNDL, "Failed to create new mutexed!");

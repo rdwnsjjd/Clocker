@@ -19,15 +19,16 @@
 
 #include <unistd.h>
 
-#include "../../headers/time_handler.h"
-#include "../../headers/timer.h"
-#include "../../headers/listener.h"
-#include "../../headers/mutexed.h"
+#include "time_handler.h"
+#include "timer.h"
+#include "listener.h"
+#include "mutexed.h"
+#include "data_master.h"
 
 
 Void time_print(UInt64 main_timer) {
 
-    UInt64 total_time       = time_get_time(main_timer);
+    UInt64 total_time       = timer_get_time(main_timer);
     UInt64 total_final_time = timer_time_spend(main_timer);
     UInt64 total_waste_time = total_time - total_final_time;
 
@@ -58,15 +59,17 @@ Hndl time_handle(Void* arg) {
 
     
     TreadArg* cmd_arg = (TreadArg*) arg;
-    Mutexed*  command = cmd_arg->command;
-    Mutexed*  mode    = cmd_arg->mode;
-    Str       version = cmd_arg->version;
+
+    DataMaster master  = cmd_arg->master;
+    Mutexed*   command = cmd_arg->command;
+    Mutexed*   mode    = cmd_arg->mode;
+    Str        version = cmd_arg->version;
 
     // starting temperory timer for calculating waste time
     Timer tmp_timer = timer_new();
 
     // starting main timer for calculating whole time
-    Timer main_timer = timer_new();
+    Timer main_timer = data_master_get_timer(master);
 
     // start main timer
     timer_start(main_timer);
@@ -78,7 +81,8 @@ Hndl time_handle(Void* arg) {
         _exit(-1);
     }
 
-    Bool is_paused = False;
+    Bool   is_paused   = False;
+    UInt64 saver_count = 0;
     do {
 
         // calculating time if is in paused mode
@@ -144,8 +148,27 @@ Hndl time_handle(Void* arg) {
             is_paused = False;
         }
 
+        if ((saver_count % 5 == 0 && 
+            command->inner.i64 != TC_Save &&
+            data_master_allow_saving(master))
+        ) {
+            // first pause main timer
+            timer_pause(main_timer);
+            
+            // save time
+            data_master_save_data(master, main_timer, False);
+
+            // reset command
+            mutexed_change(command, gen_type(TC_None));
+
+            // resume main timer
+            timer_resume(main_timer);
+        }
+        
+
         // wait for 1 sec
         sleep(1);
+        saver_count++;
         
     // while listener is fired or program is not terminated, continue
     } while (command->inner.i32 != TC_End);
@@ -153,6 +176,10 @@ Hndl time_handle(Void* arg) {
     // outside of the loop, the main time is over!
     timer_stop(main_timer);
     time_print(main_timer);
+
+    timer_destroy(tmp_timer);
+
+    data_master_off(master, main_timer);
 
     return INVALID_HNDL;
 }

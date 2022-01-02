@@ -19,7 +19,9 @@
 #define HEADERS_ENV_H
 
 #include "../includes/common/inc.h"
-#include "../headers/mutexed.h"
+#include "mutexed.h"
+#include "data_master.h"
+
 
 typedef enum {
     TM_Default,
@@ -33,14 +35,16 @@ typedef enum {
     TC_End,
     TC_Report,
     TC_Pause,
-    TC_Resume
+    TC_Resume,
+    TC_Save
 }
 TimeCommand;
 
 typedef struct {
-    Str      version;
-    Mutexed* mode;
-    Mutexed* command;
+    DataMaster master;
+    Str        version;
+    Mutexed*   mode;
+    Mutexed*   command;
 }
 TreadArg;
 

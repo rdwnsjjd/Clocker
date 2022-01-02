@@ -1,4 +1,4 @@
-// Copyright (C) 2021 rdwn
+// Copyright (C) 2022 Redwan
 // 
 // This file is part of Clocker.
 // 
@@ -15,26 +15,26 @@
 // You should have received a copy of the GNU General Public License
 // along with Clocker.  If not, see <http://www.gnu.org/licenses/>.
 
-#ifndef HEDARS_MUTEX_H
-#define HEDARS_MUTEX_H
+#ifndef HEADERS_DATA_MASTER_H
+#define HEADERS_DATA_MASTER_H
 
 #include "../includes/common/inc.h"
+#include "timer.h"
 
-#include <pthread.h>
+typedef UInt64 DataMaster;
 
-typedef pthread_mutex_t Mutex;
+Bool data_master_save_data(
+    DataMaster master, 
+    Timer     timer, 
+    Bool      final
+);
 
-typedef struct {
-    Mutex    mutex;
-    GenType  inner;
-}
-Mutexed;
+DataMaster data_master_on(Bool no_save);
 
-Mutexed* mutexed_new(GenType inner);
+Void data_master_off(DataMaster master, Timer timer);
 
-Void mutexed_change(Mutexed* mutexed, GenType value);
+Timer data_master_get_timer(DataMaster master);
 
-Void mutexed_destroy(Mutexed* mutexed);
+Timer data_master_allow_saving(DataMaster master);
 
-
-#endif // HEDARS_MUTEX_H
+#endif // HEADERS_DATA_MASTER_H

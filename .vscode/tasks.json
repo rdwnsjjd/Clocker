@@ -5,6 +5,8 @@
             "label": "C/C++: gcc-11 build active file",
             "command": "/usr/bin/gcc-11",
             "args": [
+                "-I/home/rdwn/Documents/projs/Clocker/headers",
+                "-I/home/rdwn/Documents/projs/Clocker/common",
                 "-fdiagnostics-color=always",
                 "-g",
                 "${file}",
@@ -15,6 +17,7 @@
                 "/home/rdwn/Documents/projs/Clocker/src/components/update_checker.c",
                 "/home/rdwn/Documents/projs/Clocker/src/components/sig_handler.c",
                 "/home/rdwn/Documents/projs/Clocker/src/components/cmd.c",
+                "/home/rdwn/Documents/projs/Clocker/src/components/data_master.c",
                 "-o",
                 "${fileDirname}/${fileBasenameNoExtension}"
             ],

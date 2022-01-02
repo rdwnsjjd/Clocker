@@ -27,6 +27,8 @@ typedef UInt64 Timer;
 
 Timer timer_new();
 
+Timer timer_init(UInt64 time, UInt64 spent);
+
 Void timer_start(Timer timer);
 
 Void timer_pause(Timer timer);
@@ -39,8 +41,10 @@ Void timer_reset(Timer timer);
 
 Void timer_reduce(Timer timer, UInt64 seconds);
 
-UInt64 time_get_time(Timer timer);
+UInt64 timer_get_time(Timer timer);
 
 UInt64 timer_time_spend(Timer timer);
+
+Void timer_destroy(Timer timer);
 
 #endif // HEADERS_TIMER_H

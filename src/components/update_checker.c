@@ -41,59 +41,46 @@ Updater update_checker_new() {
     _Updater* new = (_Updater*) malloc(sizeof(_Updater));
     soft_assert_ret_id(new != INVALID_HNDL, "Allocating new updater failed!");
 
-    Passwd* home_dir       = getpwuid(getuid());
-    Char    data_dir[128]  = {0};
-    Char    data_file[128] = {0};
-    Stat    stat_var       = {0};
+    Stat    stat_var          = {0};
+    Passwd* home_dir          = getpwuid(getuid());
+    Char    config_file[4096] = {0};
 
-    sprintf(data_dir, "%s/%s", home_dir->pw_dir, ".config/clocker");
-    sprintf(data_file, "%s/%s", home_dir->pw_dir, ".config/clocker/clocker.conf");
+    sprintf(config_file, "%s/%s", home_dir->pw_dir, ".config/clocker/clocker.conf");
 
-    if (
-        !(stat(data_dir, &stat_var) == 0 &&
-        S_ISDIR(stat_var.st_mode))
-    ) {
+    Size config_file_size = 0;
+    FILE* config_file_ptr = fopen(config_file, "r");
 
+    if (config_file_ptr == INVALID_HNDL) {
+
+        config_file_ptr = fopen(config_file, "w");
         soft_assert_ret_id(
-            mkdir(data_dir, 0700) == 0,
-            "Creating main app directory failed! (%s)",
-            strerror(errno)
-        );
-    }
-
-    Size data_file_size = 0;
-    FILE* data_file_ptr = fopen(data_file, "r");
-    if (data_file_ptr == INVALID_HNDL) {
-
-        data_file_ptr = fopen(data_file, "w");
-        soft_assert_ret_id(
-            data_file_ptr != INVALID_HNDL,
-            "Creating main app data file failed! (%s)",
+            config_file_ptr != INVALID_HNDL,
+            "Creating main app config file failed! (%s)",
             strerror(errno)
         );
 
-        fputs(INIT_VERSION, data_file_ptr);
-        data_file_size = strlen(INIT_VERSION);
+        fputs(INIT_VERSION, config_file_ptr);
+        config_file_size = strlen(INIT_VERSION);
 
-        new->version = (Str) malloc(sizeof(Char) * data_file_size);
+        new->version = (Str) malloc(sizeof(Char) * config_file_size);
         soft_assert_ret_id(new->version != INVALID_HNDL, "Allocating new string failed!");
-        memcpy(new->version, INIT_VERSION, data_file_size);
+        memcpy(new->version, INIT_VERSION, config_file_size);
     }
 
     else {
         // getting data file size
-        fseek(data_file_ptr, 0L, SEEK_END);
-        data_file_size = ftell(data_file_ptr);
-        fseek(data_file_ptr, 0L, SEEK_SET);
+        fseek(config_file_ptr, 0L, SEEK_END);
+        config_file_size = ftell(config_file_ptr);
+        fseek(config_file_ptr, 0L, SEEK_SET);
 
-        new->version = (Str) malloc(sizeof(Char) * data_file_size);
+        new->version = (Str) malloc(sizeof(Char) * config_file_size);
         soft_assert_ret_id(new->version != INVALID_HNDL, "Allocating new string failed!");
-        fscanf(data_file_ptr, "%s", new->version);
+        fscanf(config_file_ptr, "%s", new->version);
     }
 
     soft_assert_ret_id(
-        fclose(data_file_ptr) == 0,
-        "Closing main app data failed! (%s)",
+        fclose(config_file_ptr) == 0,
+        "Closing main app config failed! (%s)",
         strerror(errno)
     );
 
