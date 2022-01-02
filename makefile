@@ -24,8 +24,9 @@ component += ${current}/src/components/timer.c
 component += ${current}/src/components/update_checker.c
 component += ${current}/src/components/sig_handler.c
 component += ${current}/src/components/cmd.c
+component += ${current}/src/components/data_master.c
 
-header := ${current}/header
+header := ${current}/headers
 
 clocker := ${current}/src/clocker.c
 updater := ${current}/src/updater.c
