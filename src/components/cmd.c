@@ -86,8 +86,8 @@ Hndl cmd_run(Hndl arg) {
         }
 
         else if (strcmp(input, "save\n") == 0 ||  (input[0] == 'S' && input[1] == '\n')) {
-            printf(OK_TXT(" Times saved!\n"));
-            mutexed_change(command, gen_type(TC_Save));
+            printf(ERR_TXT(" Not for use yet!\n"));
+            // mutexed_change(command, gen_type(TC_Save));
         }
 
         else if (strcmp(input, "version\n") == 0 ||  (input[0] == 'v' && input[1] == '\n')) {

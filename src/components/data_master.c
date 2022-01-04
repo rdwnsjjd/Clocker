@@ -39,7 +39,20 @@ typedef enum {
     DFS_Saved,
     DFS_NotSaved
 }
-DataFileState;
+DataFileStatus;
+
+typedef struct {
+    DataFileStatus  state;
+    Bool           is_locked; 
+}
+DataFileLock;
+
+typedef struct {
+    UInt64      total;
+    UInt64      final;
+    UInt64      now;
+}
+DataFileData;
 
 typedef struct {
     Str     home_dir;
@@ -137,20 +150,39 @@ Bool data_master_lock_init(_DataMaster* master) {
 }
 
 
+Void data_master_get_lock(
+    _DataMaster*  master, 
+    DataFileLock* lock
+) {
+
+    master->lock_file_handle = fopen(master->paths.lock_file, "r");
+    soft_assert_ret_id(
+        master->lock_file_handle != INVALID_HNDL, 
+        "Opening main app lock file failed: (%s)!", 
+        strerror(errno)
+    );
+
+    fgets((Bytes)lock, sizeof(DataFileLock), master->lock_file_handle);
+
+    soft_assert_ret_id(
+        fclose(master->lock_file_handle) == 0,
+        "Failed to close lock file: (%s)!",
+        strerror(errno)
+    );
+
+    return;
+}
+
+
 Bool data_master_lock(_DataMaster* master) {
 
-    Bool first_time = True;
+    Bool first_time   = True;
+    DataFileLock lock = {0};
+    data_master_get_lock(master, &lock);
 
     loop {
-        master->lock_file_handle = fopen(master->paths.lock_file, "r");
-        soft_assert_ret_id(
-            master->lock_file_handle != INVALID_HNDL, 
-            "Opening main app lock file failed: (%s)!", 
-            strerror(errno)
-        );
-        
-        Int64 locked = fgetc(master->lock_file_handle);
-        if (locked == True) {
+
+        if (lock.is_locked) {
 
             if (first_time) {
                 printf(DNG_TXT("Blocked! waiting...")"\n");
@@ -160,17 +192,11 @@ Bool data_master_lock(_DataMaster* master) {
                 first_time = False;
             }
 
+            data_master_get_lock(master, &lock);
             sleep(5);
-            
-            soft_assert_ret_id(
-                fclose(master->lock_file_handle) == 0,
-                "Failed to close lock file: (%s)!",
-                strerror(errno)
-            );
         }
 
         else {
-            fclose(master->lock_file_handle);
 
             master->lock_file_handle = fopen(master->paths.lock_file, "w");
             soft_assert_ret_id(
@@ -179,7 +205,13 @@ Bool data_master_lock(_DataMaster* master) {
                 strerror(errno)
             );
 
-            fputc(True, master->lock_file_handle);
+            lock.state     = (lock.state == DFS_Nothing) ? DFS_NotSaved : lock.state;
+            lock.is_locked = True;
+
+            for (Idx idx = 0; idx < sizeof(DataFileLock); idx++) {
+                fputc(((Bytes)&lock)[idx], master->lock_file_handle);
+            }
+
             break;
         }
     }
@@ -203,7 +235,14 @@ Bool data_master_unlock(_DataMaster* master) {
         strerror(errno)
     );
 
-    fputc(False, master->lock_file_handle);
+    DataFileLock lock = {
+        .state     = DFS_Saved,
+        .is_locked = False
+    };
+
+    for (Idx idx = 0; idx < sizeof(DataFileLock); idx++) {
+        fputc(((Bytes)&lock)[idx], master->lock_file_handle);
+    }
 
     soft_assert_ret_id(
         fclose(master->lock_file_handle) == 0,
@@ -212,39 +251,6 @@ Bool data_master_unlock(_DataMaster* master) {
     );
 
     return True;
-}
-
-
-DataFileState data_master_check_data(_DataMaster* master) {
-
-    master->data_file_handle = fopen(master->paths.data_file, "r");
-    soft_assert_ret_id(
-        master->data_file_handle != INVALID_HNDL, 
-        "Opening main app data file failed: (%s)!", 
-        strerror(errno)
-    );
-
-    DataFileState ret = DFS_Nothing;
-
-    Bool state = (Bool) (fgetc(master->data_file_handle) - '0');
-    switch (state) {
-        case True:
-            ret = DFS_Saved;
-            break;
-        case False:
-            ret = DFS_NotSaved;
-            break;
-        default:
-            break;
-    };
-
-    soft_assert_ret_id(
-        fclose(master->data_file_handle) == 0,
-        "Failed to close lock file: (%s)!",
-        strerror(errno)
-    );
-
-    return ret;
 }
 
 
@@ -257,45 +263,10 @@ Bool data_master_read_data(_DataMaster* master) {
         strerror(errno)
     );
 
-    Char buff[32] = {'\000'};
-    fgets(buff, 32, master->data_file_handle);
-
-    Str  cur = buff;
-
-    Char total[8] = {0};
-    Char final[8] = {0};
-    Char now[16]  = {0};
-    Str tmp       = INVALID_HNDL;
-    Idx last      = 0;
-
-    for (Idx idx = 0;; cur++, idx++) {
-
-        if (*cur == '>') {
-            tmp  = cur + 1;
-            last = idx + 1;
-        }
-
-        else if (*cur == '/') {
-            memcpy(now, tmp, idx - last);
-            tmp  = cur + 1;
-            last = idx + 1;
-        }
-
-        else if (*cur == '-') {
-            memcpy(total, tmp, idx - last);
-            tmp  = cur + 1;
-            last = idx + 1;
-        }
-
-        else if (*cur == '\000') {
-            memcpy(final, tmp, idx - last);
-            tmp  = cur + 1;
-            last = idx + 1;
-            break;
-        }
-    }
+    DataFileData data = {0};
+    fgets((Bytes)& data, sizeof(DataFileData), master->data_file_handle);
     
-    master->timer = timer_init(atol(total), atol(final));
+    master->timer = timer_init(data.total, data.final);
     soft_assert_ret_id(master->timer != 0, "Initializing new timer failed!");
 
     soft_assert_ret_id(
@@ -325,16 +296,17 @@ Bool data_master_save_data(
     );
 
     gettimeofday(&time, INVALID_HNDL);
-    UInt64 a = timer_get_time(timer);
-    UInt64 b = timer_time_spend(timer);
-    fprintf(
-        _master->data_file_handle, 
-        "%d>%ld/%ld-%ld", 
-        final, 
-        time.tv_sec,
-        a, 
-        b
-    );
+
+    DataFileData data = {
+        .now   = time.tv_sec,
+        .total = timer_get_time(timer),
+        .final = timer_time_spend(timer)
+    };
+
+    for (Idx idx = 0; idx < sizeof(DataFileData); idx++) {
+        fputc(((Bytes)&data)[idx], _master->data_file_handle);
+    }
+    
     
     soft_assert_ret_id(
         fclose(_master->data_file_handle) == 0,
@@ -384,7 +356,10 @@ DataMaster data_master_on(Bool no_save) {
         "Initializing app data file failed!"
     );
 
-    if (data_master_check_data(new) != DFS_Nothing && new->saving) {
+    DataFileLock lock = {0};
+    data_master_get_lock(new, &lock);
+    
+    if (lock.state != DFS_Nothing && new->saving) {
         printf(INF_TXT("There are some data from last time Clocker was run.\n"\
               "Do you want to resotre and continue that?[Y/n]")
         );

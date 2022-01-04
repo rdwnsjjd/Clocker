@@ -83,6 +83,11 @@ Int32 main(
     DataMaster master = data_master_on(no_save);
     soft_assert_ret_int(master != 0, "Failed to turning data master on!");
 
+    if (argv[1] && strcmp(argv[1], "--clean") == 0) {
+
+        data_master_unlock();
+    }
+
     // signal handling
     signal(SIGINT, signal_handler);
     signal(SIGSEGV, signal_handler);
