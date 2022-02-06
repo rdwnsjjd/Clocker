@@ -62,8 +62,8 @@ Unlike that, when you use your system, but not in your main job, you can `pause`
 
 #### What will be added
 This app created because of need, So whenever the need arises, a new feature will be added. for now I want to add two more features,
-- data saver
-- data exporter
+- [x] data saver
+- [ ] data exporter
 
 if you find this app useful and feel maybe some new features is needed, please create an issue, I welcome any idea or suggestion! 
 
