@@ -15,8 +15,8 @@
 // You should have received a copy of the GNU General Public License
 // along with Clocker.  If not, see <http://www.gnu.org/licenses/>.
 
-#ifndef HEADERS_ENV_H
-#define HEADERS_ENV_H
+#ifndef _HEADERS_THREAD_ARG_H_
+#define _HEADERS_THREAD_ARG_H_
 
 #include "../includes/common/inc.h"
 #include "mutexed.h"
@@ -58,11 +58,11 @@ INLINE Str time_mode_from(TimeMode mode) {
             return "busy";
 
         case TM_Paused:
-            return WRN_TXT("paused");
+            return "paused";
         
         default:
             return "";
     }
 }
 
-#endif // HEADERS_ENV_H
+#endif // _HEADERS_THREAD_ARG_H_

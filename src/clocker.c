@@ -69,15 +69,21 @@ Int32 main(
     Str   argv[]
 ) {
 
-    Bool no_save = True;
-    if (argv[1] && strcmp(argv[1], "--save") == 0) {
+    Bool no_save = False;
+    if (argv[1] && strcmp(argv[1], "--no-save") == 0) {
 
-        printf(WRN_TXT("\n WARNING: you are using UNSTABLE feature!\n"\
-                "   You may face some unknown behavior or crash in app.\n"\
-                "   This feature is just for testing no for normal usage.\n"
-                "   If you face any problem, contact me\n\n"));
+        no_save = True;
+    }
 
-        no_save = False;
+    if (argv[1] && strcmp(argv[1], "--clean") == 0) {
+
+        printf(INF_TXT("\n Cleaning cash ..."));
+        soft_assert_ret_int(
+            remove("/root/.config/clocker/lock") == 0,
+            "Removing lock file failed: (%s)!",
+            strerror(errno)
+        );
+        printf(INF_TXT("\n Done!"));
     }
 
     DataMaster master = data_master_on(no_save);

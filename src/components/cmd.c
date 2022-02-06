@@ -68,8 +68,6 @@ Hndl cmd_run(Hndl arg) {
 
         else if (strcmp(input, "pause\n") == 0 || (input[0] == 'P' && input[1] == '\n')) {
 
-            printf(WRN_TXT(" WARNING: You are using unstable feature\n"));
-            
             mutexed_change(command, gen_type(TC_Pause));
             mutexed_change(mode,    gen_type(TM_Paused));
         }
@@ -103,13 +101,13 @@ Hndl cmd_run(Hndl arg) {
         else if (strcmp(input, "help\n") == 0 ||  (input[0] == 'h' && input[1] == '\n')) {
             printf("\n Clocker supports these commands:\n" \
                 TRANSPARENT_TXT(BOLD_TXT("    b, busy            "))\
-                TRANSPARENT_TXT(ITALIC_TXT( ":I have no waste time, even when idel!\n"))\
+                TRANSPARENT_TXT(ITALIC_TXT( ":I have no waste time, even when idle!\n"))\
                 TRANSPARENT_TXT(BOLD_TXT("    d, default         "))\
-                TRANSPARENT_TXT(ITALIC_TXT(":Oh, I have some waste time, please cosider it!\n"))\
+                TRANSPARENT_TXT(ITALIC_TXT(":Oh, I have some waste time, please consider it!\n"))\
                 TRANSPARENT_TXT(BOLD_TXT("    r, report          "))\
                 TRANSPARENT_TXT(ITALIC_TXT(":Get me my time to here\n"))\
                 TRANSPARENT_TXT(BOLD_TXT("    P, pause           "))\
-                TRANSPARENT_TXT(ITALIC_TXT(":Consider all times from now as waste ") WRN_TXT("(UNSTABLE)\n" ))\
+                TRANSPARENT_TXT(ITALIC_TXT(":Consider all times from now as waste \n"))\
                 TRANSPARENT_TXT(BOLD_TXT("    R, resume          "))\
                 TRANSPARENT_TXT(ITALIC_TXT(":Resume paused mode\n"))\
                 TRANSPARENT_TXT(BOLD_TXT("    v, version         "))\
