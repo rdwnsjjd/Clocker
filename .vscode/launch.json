@@ -9,7 +9,7 @@
             "type": "cppdbg",
             "request": "launch",
             "program": "${fileDirname}/${fileBasenameNoExtension}",
-            "args": ["--save"],
+            "args": [],
             "stopAtEntry": false,
             "cwd": "${fileDirname}",
             "environment": [],
@@ -23,7 +23,7 @@
                 }
             ],
             "preLaunchTask": "C/C++: gcc-11 build active file",
-            "miDebuggerPath": "/bin/gdb"
+            "miDebuggerPath": "/usr/bin/gdb"
         }
     ]
 }
