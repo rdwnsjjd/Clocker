@@ -52,17 +52,18 @@ result_t thread_wait(
     thread_t OUT thread
 );
 
+result_t thread_destroy(
+    thread_t OUT thread
+);
 
 guarded_t guarded_new(
     gen_t IN data
 );
 
-
 void_t guarded_change(
     guarded_t* IN guard,
     gen_t      IN data
 );
-
 
 result_t guarded_lock(
     guarded_t* IN guard

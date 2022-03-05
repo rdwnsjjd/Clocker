@@ -138,9 +138,9 @@ i32_t main(
     // waiting for time thread to join
     thread_wait(timer_thread);
 
+    // destroy another thread
+    thread_destroy(cmd_thread);
+
     // destroy update checker after `timer_thread` joined
     update_checker_destroy(checker);
-
-    // pthread_detach(timer_thread.hndle);
-    // pthread_detach(cmd_thread.hndle);
 }

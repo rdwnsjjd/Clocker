@@ -153,6 +153,9 @@ update_status_t update_checker_check(updater_t* updater) {
                     "Deleting tags file failed (%s)",
                     strerror(errno)
                 );
+
+                boxed_destroy(boxed);
+                boxed_destroy(string_boxed);
                 return US_NoUpdate;
             }
 
@@ -171,13 +174,14 @@ update_status_t update_checker_check(updater_t* updater) {
                     strerror(errno)
                 );
 
+                boxed_destroy(boxed);
+                boxed_destroy(string_boxed);
                 return US_Updatable;
             }
 
             boxed_destroy(string_boxed);
         }
     }
-    
     boxed_destroy(boxed);
 }
 

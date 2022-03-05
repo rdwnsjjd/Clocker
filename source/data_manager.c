@@ -389,7 +389,7 @@ data_manager_t data_manager_start(bool_t no_save) {
                 "Reading data failed!"
             );
 
-            return (data_manager_t) (data_manager_t) {.inner = (u64_t) new};
+            return (data_manager_t) (data_manager_t) {.inner = boxed};
         }
     }
 

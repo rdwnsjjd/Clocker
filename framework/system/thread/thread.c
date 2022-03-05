@@ -63,3 +63,10 @@ result_t thread_wait(
 ) {
     pthread_join(thread.hndle, INVALID_HNDL);
 }
+
+
+result_t thread_destroy(
+    thread_t OUT thread
+) {
+    pthread_detach(thread.hndle);
+}
