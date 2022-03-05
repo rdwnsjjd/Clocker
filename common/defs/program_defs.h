@@ -15,12 +15,12 @@
 // You should have received a copy of the GNU General Public License
 // along with Clocker.  If not, see <http://www.gnu.org/licenses/>.
 
-#ifndef COMMON_DEFS_H
-#define COMMON_DEFS_H
+#ifndef _COMMON_DEFS_PROGRAM_DEFS_H_
+#define _COMMON_DEFS_PROGRAM_DEFS_H_
 
 #include "common/defs/inc.h"
 
-#define INIT_VERSION "0.2-beta.0"
+#define INIT_VERSION "0.5-beta.0"
 
 #define CLOCKER_BANNER  COLOR_TRANSPARENT"\n"\
 "   █████████  ████                    █████\n" \
@@ -45,4 +45,4 @@
 #define BOLD_TXT(txt_)          COLOR_BOLD         txt_ COLOR_RESET
 #define ITALIC_TXT(txt_)        COLOR_ITALIC       txt_ COLOR_RESET
 
-#endif // COMMON_DEFS_H
+#endif // _COMMON_DEFS_PROGRAM_DEFS_H_

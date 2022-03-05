@@ -26,6 +26,8 @@
 
 handle_t cmd_run(guarded_t* arg) {
 
+    // TODO: thread safe
+
     thread_arg_t*   cmd_arg   = arg->data.ptr;
     time_command_t* command = &cmd_arg->command;
     time_mode_t*    mode    = &cmd_arg->mode;
@@ -121,6 +123,6 @@ handle_t cmd_run(guarded_t* arg) {
         }
     }
 
-    guarded_unlock(arg);
+    // guarded_unlock(arg);
 
 }

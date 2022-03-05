@@ -32,7 +32,8 @@
 
 #define MUT
 #define PUB
-#define UNSAFE
+#define _UNSAFE
+#define UNSAFE(a, ...)    a ##__VA_ARGS__
 
 #define NO_RET  __attribute__((noreturn))
 

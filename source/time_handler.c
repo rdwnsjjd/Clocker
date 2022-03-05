@@ -23,7 +23,7 @@
 #include "framework/system/thread/inc.h"
 #include "includes/timer.h"
 #include "includes/listener.h"
-#include "includes/data_master.h"
+#include "includes/data_manager.h"
 #include "includes/thread_arg.h"
 
 
@@ -58,10 +58,11 @@ void_t time_print(clocker_timer_t* main_timer) {
 
 handle_t time_handle(guarded_t* arg) {
 
+    // TODO: thread safe
     
     thread_arg_t* cmd_arg   = arg->data.ptr;
 
-    data_master_t   master  = cmd_arg->master;
+    data_manager_t   manager  = cmd_arg->manager;
     time_command_t* command = &cmd_arg->command;
     time_mode_t*    mode    = &cmd_arg->mode;
     str_t           version = cmd_arg->version;
@@ -70,14 +71,14 @@ handle_t time_handle(guarded_t* arg) {
     clocker_timer_t tmp_timer = timer_new();
 
     // starting main timer for calculating whole time
-    clocker_timer_t main_timer = data_master_get_timer(&master);
+    clocker_timer_t* main_timer = data_manager_get_timer(&manager);
 
     // start main timer
-    timer_start(&main_timer);
+    timer_start(main_timer);
 
     // creating new mouse-keyboard event listener
     listener_t listener = listener_new();
-    if (listener.inner == 0) {
+    if (boxed_unbox(&listener.inner) == INVALID_HNDL) {
         debug_err("Creating new listener failed!");
         _exit(-1);
     }
@@ -87,7 +88,7 @@ handle_t time_handle(guarded_t* arg) {
     do {
         // calculating time if is in paused mode
         if (is_paused) {
-            timer_reduce(&main_timer, 1);
+            timer_reduce(main_timer, 1);
         }
 
         // calculating time if is in normal mode
@@ -108,7 +109,7 @@ handle_t time_handle(guarded_t* arg) {
                 !is_paused
             ) {
                 // if waste time was more than 2 min, reducing main time
-                timer_reduce(&main_timer, waste_time);
+                timer_reduce(main_timer, waste_time);
             }
 
             // reset temperory timer
@@ -118,16 +119,16 @@ handle_t time_handle(guarded_t* arg) {
         // get report
         if (*command == TC_Report) {
             // first pause main timer
-            timer_pause(&main_timer);
+            timer_pause(main_timer);
             
             // print time
-            time_print(&main_timer);
+            time_print(main_timer);
 
             // reset command
             *command = TC_None;
 
             // resume main timer
-            timer_resume(&main_timer);
+            timer_resume(main_timer);
         }
 
         // pause time start
@@ -148,19 +149,19 @@ handle_t time_handle(guarded_t* arg) {
 
         if ((saver_count % 5 == 0 && 
             *command != TC_Save &&
-            data_master_allow_saving(&master))
+            data_manager_allow_saving(&manager))
         ) {
             // first pause main timer
-            timer_pause(&main_timer);
+            timer_pause(main_timer);
             
             // save time
-            data_master_save_data(&master, &main_timer, B_False);
+            data_manager_save_data(&manager, main_timer, B_False);
 
             // reset command
             *command = TC_None;
 
             // resume main timer
-            timer_resume(&main_timer);
+            timer_resume(main_timer);
         }
 
         // wait for 1 sec
@@ -171,14 +172,13 @@ handle_t time_handle(guarded_t* arg) {
     } while (*command != TC_End);
 
     // outside of the loop, the main time is over!
-    timer_stop(&main_timer);
-    time_print(&main_timer);
+    timer_stop(main_timer);
+    time_print(main_timer);
 
-    guarded_unlock(arg);
-    data_master_off(master, &main_timer);
-
+    // guarded_unlock(arg);
+    data_manager_stop(manager, main_timer);
     timer_destroy(tmp_timer);
-    timer_destroy(main_timer);
+    listener_destroy(listener);
 
     return INVALID_HNDL;
 }

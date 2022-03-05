@@ -53,14 +53,16 @@ typedef struct {
     event_listener_t keyboard;
     bool_t           flag;
     nfds_t           nfds;
-    UNSAFE pollfd_t  fds[2];
+    pollfd_t  fds[2];
 }
 listener_inner_t;
 
 
 listener_t listener_new() {
-    listener_inner_t* new = (listener_inner_t*) malloc(sizeof(listener_inner_t));
-    soft_assert_ret(new, (listener_t) {.inner = 0}, "Allocating new listener failed!");
+    boxed_t boxed = boxed_new(sizeof(listener_inner_t));
+    soft_assert_ret(boxed_unbox(&boxed) != INVALID_HNDL, (listener_t) {.inner = 0}, "Allocating new listener failed!");
+
+    listener_inner_t* new = (listener_inner_t*) boxed_unbox(&boxed);
 
     dirnet_t* dir_net = {0};     
     DIR* dir = opendir ("/dev/input/by-path");
@@ -71,6 +73,7 @@ listener_t listener_new() {
         strerror(errno)
     );
 
+    //! FIXME: it's not working on some laptop systems 
     while (dir_net = readdir(dir)) {
 
         if (*(dir_net->d_name) != '.') {
@@ -119,7 +122,7 @@ listener_t listener_new() {
 
     new->nfds = 2;
 
-    return (listener_t) {.inner = (u64_t) new};
+    return (listener_t) {.inner = boxed};
 }
 
 
@@ -128,7 +131,7 @@ void_t listener_listen(listener_t* listener) {
     Thread mouse_thrd    = 0;
     Thread keyboard_thrd = 0;
 
-    listener_inner_t* _listener = (listener_inner_t*) listener->inner;
+    listener_inner_t* _listener = (listener_inner_t*) boxed_unbox(&listener->inner);
     size_t counter = 0;
 
     loop {
@@ -159,12 +162,11 @@ void_t listener_listen(listener_t* listener) {
 
 
 i64_t listener_fired(listener_t* listener) {
-    listener_inner_t* _listener = (listener_inner_t*) listener->inner;
+    listener_inner_t* _listener = (listener_inner_t*) boxed_unbox(&listener->inner);
     return (_listener->keyboard.fired || _listener->mouse.fired);
 }
 
 
-i64_t listener_drop(listener_t listener) {
-    listener_inner_t* _listener = (listener_inner_t*) listener.inner;
-    free(_listener);
+i64_t listener_destroy(listener_t listener) {
+    boxed_destroy(listener.inner);
 }

@@ -22,6 +22,7 @@
 
 #include "common/defs/inc.h"
 #include "framework/prims/inc.h"
+#include "framework/system/memory/inc.h"
 
 typedef enum {
     US_Error,
@@ -30,15 +31,20 @@ typedef enum {
 }
 update_status_t;
 
-typedef u64_t updater_t;
+typedef struct {
+    boxed_t inner;
+}
+updater_t;
 
 
 updater_t update_checker_new();
 
-update_status_t update_checker_check(updater_t updater);
+update_status_t update_checker_check(updater_t* updater);
 
-str_t update_checker_get_version(updater_t updater);
+str_t update_checker_get_version(updater_t* updater);
 
-str_t update_checker_get_new_tag(updater_t updater);
+str_t update_checker_get_new_tag(updater_t* updater);
+
+void_t update_checker_destroy(updater_t updater);
 
 #endif // _INCLUDES_UPDATER_CHECKER_H_

@@ -19,9 +19,10 @@
 #define HEADERS_LISTENER_H
 
 #include "common/defs/inc.h"
+#include "framework/system/memory/inc.h"
 
 typedef struct {
-    u64_t inner;
+    boxed_t inner;
 }
 listener_t;
 
@@ -32,9 +33,7 @@ void_t listener_listen(listener_t* listener);
 
 i64_t listener_fired(listener_t* listener);
 
-i64_t listener_drop(listener_t listener);
-
-
+i64_t listener_destroy(listener_t listener);
 
 #define listener_event_fired(_listener) listener_fired(_listener)
 

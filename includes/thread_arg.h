@@ -20,7 +20,7 @@
 
 #include "common/defs/inc.h"
 #include "framework/system/thread/inc.h"
-#include "includes/data_master.h"
+#include "includes/data_manager.h"
 
 
 typedef enum {
@@ -41,7 +41,7 @@ typedef enum {
 time_command_t;
 
 typedef struct {
-    data_master_t  master;
+    data_manager_t  manager;
     str_t          version;
     time_command_t command;
     time_mode_t    mode;
@@ -53,13 +53,13 @@ INLINE thread_arg_t thread_arg_new(
     time_command_t command, 
     time_mode_t    mode, 
     str_t          version, 
-    data_master_t  master
+    data_manager_t  manager
 ) {
     return (thread_arg_t) {
         .command = command,
         .mode    = mode,
         .version = version,
-        .master  = master
+        .manager  = manager
     };
 }
 

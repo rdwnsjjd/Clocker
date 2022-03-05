@@ -15,30 +15,31 @@
 // You should have received a copy of the GNU General Public License
 // along with Clocker.  If not, see <http://www.gnu.org/licenses/>.
 
-#ifndef _INCLUDES_DATA_MASTER_H_
-#define _INCLUDES_DATA_MASTER_H_
+#ifndef _INCLUDES_DATA_MANAGER_H_
+#define _INCLUDES_DATA_MANAGER_H_
 
 #include "common/defs/inc.h"
 #include "framework/prims/inc.h"
+#include "framework/system/memory/inc.h"
 #include "includes/timer.h"
 
 typedef struct {
-    u64_t inner;
+    boxed_t inner;
 }
-data_master_t;
+data_manager_t;
 
-bool_t data_master_save_data(
-    data_master_t*   master, 
+bool_t data_manager_save_data(
+    data_manager_t*   manager, 
     clocker_timer_t* timer, 
     bool_t           final
 );
 
-data_master_t data_master_on(bool_t no_save);
+data_manager_t data_manager_start(bool_t no_save);
 
-void_t data_master_off(data_master_t master, clocker_timer_t* timer);
+void_t data_manager_stop(data_manager_t manager, clocker_timer_t* timer);
 
-clocker_timer_t data_master_get_timer(data_master_t* master);
+clocker_timer_t* data_manager_get_timer(data_manager_t* manager);
 
-bool_t data_master_allow_saving(data_master_t* master);
+bool_t data_manager_allow_saving(data_manager_t* manager);
 
-#endif // _INCLUDES_DATA_MASTER_H_
+#endif // _INCLUDES_DATA_MANAGER_H_

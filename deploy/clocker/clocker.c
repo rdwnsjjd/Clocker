@@ -29,100 +29,118 @@
 #include "includes/time_handler.h"
 #include "includes/updater_checker.h"
 #include "includes/sig_handler.h"
-#include "includes/data_master.h"
+#include "includes/data_manager.h"
 #include "includes/cmd.h"
 
 
-// void_t clocker_update_checking(updater_t checker) {
+void_t clocker_update_checking(updater_t* checker) {
 
-//     update_status_t update_check_res = update_checker_check(checker);
-//     soft_assert_wrn(
-//         update_check_res != US_Error,
-//         "Checking for new version failed!"
-//     );
+    // check for update
+    update_status_t update_check_res = update_checker_check(checker);
+    soft_assert_wrn(
+        update_check_res != US_Error,
+        "Checking for new version failed!"
+    );
 
-//     if (update_check_res == US_Updatable) {
-//         printf("Version %s is available!\nyou have version %s!\nDo you want to install it? [Y/n]", 
-//             update_checker_get_new_tag(checker),
-//             update_checker_get_version(checker)
-//         );
+    // if update is available, prepare it
+    if (update_check_res == US_Updatable) {
 
-//         char_t result = fgetc(stdin);
-//         if (result == '\n' || result == 'Y' || result == 'y') {
-//             str_t arg[3] = {"/usr/bin/clocker-updater", "--from-clocker", INVALID_HNDL};
-//             execvp("/usr/bin/clocker-updater", arg);
-//             perror("");
-//         }
-//         else {
-//             printf("Aborted!\n\n");
-//         }
-//     }
-//     else if (update_check_res == US_NoUpdate) {
-//         printf("All is up to date!\n");
-//     }
-// }
+        // first, ask user if he/she wants to update app?
+        printf("Version %s is available!\nyou have version %s!\nDo you want to install it? [Y/n]", 
+            update_checker_get_new_tag(checker),
+            update_checker_get_version(checker)
+        );
+
+        // getting user response to above question
+        char_t result = fgetc(stdin);
+        if (result == '\n' || result == 'Y' || result == 'y') {
+
+            // if YES, do update
+            str_t arg[3] = {"/usr/bin/clocker-updater", "--from-clocker", INVALID_HNDL};
+            execvp("/usr/bin/clocker-updater", arg);
+            perror("");
+        }
+        else {
+            // if NO, abort updating process
+            printf("Aborted!\n\n");
+        }
+    }
+
+    // if update is not available, tell it to the user
+    else if (update_check_res == US_NoUpdate) {
+        printf("All is up to date!\n");
+    }
+}
+
+
+result_t clear_cache() {
+    printf(INF_TXT("\n Cleaning cash ..."));
+    soft_assert_ret_res(
+        remove("/root/.config/clocker/lock") == 0,
+        "Removing lock file failed: (%s)!",
+        strerror(errno)
+    );
+    // soft_assert_ret_res(
+    //     remove("/root/.config/clocker/data") == 0,
+    //     "Removing data file failed: (%s)!",
+    //     strerror(errno)
+    // );
+    printf(INF_TXT("\n Done!\n\n"));
+}
 
 
 i32_t main(
     i32_t argc,
-    str_t   argv[]
+    str_t argv[]
 ) {
 
-    // bool_t no_save = B_False;
-    // if (argv[1] && strcmp(argv[1], "--no-save") == 0) {
+    // no_save flag determine if user wants to save its data on system for later use or not
+    bool_t no_save = argv[1] && strcmp(argv[1], "--no-save") == 0 ? B_True : B_False;
 
-    //     no_save = B_True;
-    // }
+    // if `--clean` flag used, clear the cash and lock file
+    if (argv[1] && strcmp(argv[1], "--clean") == 0) {
+        soft_assert_res_ret_int(clear_cache(), "Failed to clear cache!");
+    }
 
-    // if (argv[1] && strcmp(argv[1], "--clean") == 0) {
+    // create new update checker object and check if it sucessfully created
+    updater_t checker = update_checker_new();
+    soft_assert_wrn(boxed_unbox(&checker.inner) != 0, "Creating new update object failed!");
 
-    //     printf(INF_TXT("\n Cleaning cash ..."));
-    //     soft_assert_ret_int(
-    //         remove("/root/.config/clocker/lock") == 0,
-    //         "Removing lock file failed: (%s)!",
-    //         strerror(errno)
-    //     );
-    //     printf(INF_TXT("\n Done!"));
-    // }
+    // if `--update` flag is used, check for update and do it if availabe
+    if (argv[1] && strcmp(argv[1], "--update") == 0) {
+        clocker_update_checking(&checker);
+    }
 
-    data_master_t master = data_master_on(B_True /* no_save */);
-    soft_assert_ret_int(master.inner != 0, "Failed to turning data master on!");
+    // start data manager and check if it fully started
+    data_manager_t manager = data_manager_start(no_save);
+    soft_assert_ret_int(boxed_unbox(&manager.inner) != INVALID_HNDL, "Failed to starting data manager!");
 
-    // if (argv[1] && strcmp(argv[1], "--clean") == 0) {
-
-    //     data_master_unlock();
-    // }
-
-    // signal handling
+    // handle `SIGINT` and `SIGSEGV` signals
     signal(SIGINT, signal_handler);
     signal(SIGSEGV, signal_handler);
 
-
-    // updater_t checker = update_checker_new();
-    // soft_assert_wrn(
-    //     checker != 0,
-    //     "Creating new update object failed!"
-    // );
-
-    // if (argv[1] && strcmp(argv[1], "--update") == 0) {
-    //     clocker_update_checking(checker);
-    // }
-
-
+    // print app banner and some helpful messages
     printf("%s\n\n", CLOCKER_BANNER);
     printf("Type "ITALIC_TXT("`help`")" to list supported commands\n");
 
-    thread_arg_t thread_arg = thread_arg_new(TC_None, TM_Default, "0.3.0-beta", master); // update_checker_get_version(checker)
+    // creating new thread argument for sending to `time_handle` thread 
+    thread_arg_t thread_arg = thread_arg_new(TC_None, TM_Default, update_checker_get_version(&checker), manager);
     guarded_t thread_arg_guarded = guarded_new(_((handle_t) &thread_arg));
 
-    // creating time handling thread
+    // spawing time handling thread
     thread_t timer_thread = thread_new();
     thread_spawn(&timer_thread, &time_handle, &thread_arg_guarded);
 
-    // creating cmd handling thread
+    // spawing command handling thread
     thread_t cmd_thread = thread_new();
-    thread_spawn(&timer_thread, &cmd_run, &thread_arg_guarded);
+    thread_spawn(&cmd_thread, &cmd_run, &thread_arg_guarded);
 
-    // waiting for time thread
+    // waiting for time thread to join
     thread_wait(timer_thread);
+
+    // destroy update checker after `timer_thread` joined
+    update_checker_destroy(checker);
+
+    // pthread_detach(timer_thread.hndle);
+    // pthread_detach(cmd_thread.hndle);
 }

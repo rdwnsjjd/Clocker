@@ -22,9 +22,10 @@
 
 #include "common/defs/inc.h"
 #include "framework/prims/inc.h"
+#include "framework/system/memory/inc.h"
 
 typedef struct {
-    u64_t inner;
+    boxed_t inner;
 }
 clocker_timer_t;
 

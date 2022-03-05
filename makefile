@@ -23,10 +23,14 @@ component += ${current}/source/timer.c
 component += ${current}/source/update_checker.c
 component += ${current}/source/sig_handler.c
 component += ${current}/source/cmd.c
-component += ${current}/source/data_master.c
+component += ${current}/source/data_manager.c
 component += ${current}/framework/system/thread/guarded.c
 component += ${current}/framework/system/thread/thread.c
 component += ${current}/framework/system/fs/wrapper.c
+component += ${current}/framework/system/memory/boxed.c
+
+updaterComponent := ${current}/source/update_checker.c
+updaterComponent += ${current}/framework/system/memory/boxed.c
 
 header := ${current}
 
@@ -39,7 +43,7 @@ buildUpdater := ${current}/final/bin/clocker-updater
 all: 
 	@mkdir -p ${current}/final/bin/
 	@gcc -I${header} -fcompare-debug-second -w -g ${component} ${clocker} -o ${buildClocker} -lpthread
-	@gcc -I${header} -fcompare-debug-second -w -g ${updater} ${current}/source/update_checker.c -o ${buildUpdater} -lpthread
+	@gcc -I${header} -fcompare-debug-second -w -g ${updater} ${updaterComponent} -o ${buildUpdater} -lpthread
 
 install: 
 	@mkdir -p /root/.config/clocker

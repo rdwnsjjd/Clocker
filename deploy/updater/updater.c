@@ -35,7 +35,7 @@ typedef struct {
     str_t version;
     str_t new_version;
 }
-_Updater;
+updater_inner_t;
 
 
 str_t updater_get_conf_file(str_t buff) {
@@ -45,9 +45,9 @@ str_t updater_get_conf_file(str_t buff) {
 }
 
 
-bool_t updater_do_update(updater_t updater) {
+bool_t updater_do_update(updater_t* updater) {
 
-    _Updater* _updater = (_Updater*) updater;
+    updater_inner_t* _updater = (updater_inner_t*) boxed_unbox(&updater->inner);
 
     printf("Updating app...\n");
 
@@ -177,17 +177,18 @@ void_t main(
 
     updater_t checker = update_checker_new();
     soft_assert_wrn(
-        checker != 0,
+        boxed_unbox(&checker.inner) != 0,
         "Creating new update object failed!"
     );
 
-    update_status_t update_check_res = update_checker_check(checker);
+    update_status_t update_check_res = update_checker_check(&checker);
     soft_assert_wrn(
         update_check_res != US_Error,
         "Checking for new version failed!"
     );
 
-    updater_do_update(checker);
+    updater_do_update(&checker);
+    update_checker_destroy(checker);
     execvp("/usr/bin/clocker", argv);
     return;
 }
