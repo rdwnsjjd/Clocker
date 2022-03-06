@@ -18,16 +18,19 @@
 #ifndef _INC_DEFS_COLOR_DEFS_H_
 #define _INC_DEFS_COLOR_DEFS_H_
 
+#define COLOR_WHITE       "\x1b[0m"
 #define COLOR_BOLD        "\x1b[1m"
+#define COLOR_TRANSPARENT "\x1b[2m"
 #define COLOR_ITALIC      "\x1b[3m"
 #define COLOR_UNDERLINE   "\x1b[4m"
-#define COLOR_TRANSPARENT "\x1b[2m"
+#define COLOR_BLIND       "\x1b[5m"
 
 #define COLOR_IN_RED     "\x1b[41m"
 #define COLOR_IN_GREEN   "\x1b[41m"
 #define COLOR_IN_YELLOW  "\x1b[43m"
 #define COLOR_IN_BLUE    "\x1b[44m"
 
+#define COLOR_BLACK   "\x1b[30m"
 #define COLOR_RED     "\x1b[31m"
 #define COLOR_GREEN   "\x1b[32m"
 #define COLOR_YELLOW  "\x1b[33m"

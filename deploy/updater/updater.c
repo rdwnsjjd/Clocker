@@ -32,8 +32,8 @@ typedef struct stat   stat_t;
 typedef struct dirent dirnet_t;
 
 typedef struct {
-    str_t version;
-    str_t new_version;
+    byte_t version[32];
+    byte_t new_version[32];
 }
 updater_inner_t;
 
@@ -58,7 +58,7 @@ bool_t updater_do_update(updater_t* updater) {
         _updater->new_version
     );
 
-    soft_assert_ret_id(
+    soft_assert_goto_return(
         system(cmd_buff) == 0,
         "Cannot get available version of clocker!"
     );
@@ -69,7 +69,7 @@ bool_t updater_do_update(updater_t* updater) {
         _updater->new_version
     );
 
-    soft_assert_ret_id(
+    soft_assert_goto_return(
         system(cmd_buff) == 0,
         "Cannot extract source file!"
     );
@@ -80,14 +80,14 @@ bool_t updater_do_update(updater_t* updater) {
         _updater->new_version
     );
 
-    soft_assert_ret_id(
+    soft_assert_goto_return(
         remove(path_buff) == 0,
         "Cannot remove source zip file!"
     );
 
     dirnet_t* dir_net = {0};     
     DIR* dir = opendir ("/root/.config/clocker/.new/source");
-    soft_assert_ret_id(
+    soft_assert_goto_return(
         dir != INVALID_HNDL, 
         "Opening source directory failed! (%s)", 
         strerror(errno)
@@ -107,7 +107,7 @@ bool_t updater_do_update(updater_t* updater) {
                 dir_net->d_name
             );
 
-            soft_assert_ret_id(
+            soft_assert_goto_return(
                 system(cmd_buff) == 0,
                 "Coping binary failed!"
             );
@@ -119,7 +119,7 @@ bool_t updater_do_update(updater_t* updater) {
                 dir_net->d_name
             );
 
-            soft_assert_ret_id(
+            soft_assert_goto_return(
                 system(cmd_buff) == 0,
                 "Coping binary failed!"
             );
@@ -128,7 +128,7 @@ bool_t updater_do_update(updater_t* updater) {
             updater_get_conf_file(path_buff);
 
             FILE* data_file_ptr = fopen(path_buff, "w");
-            soft_assert_ret_id(
+            soft_assert_goto_return(
                 data_file_ptr != INVALID_HNDL,
                 "Creating main app data file failed! (%s)",
                 strerror(errno)
@@ -137,7 +137,7 @@ bool_t updater_do_update(updater_t* updater) {
             fputs(_updater->new_version, data_file_ptr);
             memcpy(_updater->version, _updater->new_version, strlen(_updater->new_version));
 
-            soft_assert_ret_id(
+            soft_assert_goto_return(
                 fclose(data_file_ptr) == 0,
                 "Closing main app data failed! (%s)",
                 strerror(errno)
@@ -147,20 +147,22 @@ bool_t updater_do_update(updater_t* updater) {
         }
     }
 
-    soft_assert_ret_id(
-        closedir(dir) == 0,
-        "Closing directory failed! (%s)",
-        strerror(errno)
-    );
+    RETURN:
+        soft_assert_ret_id(
+            closedir(dir) == 0,
+            "Closing directory failed! (%s)",
+            strerror(errno)
+        );
 
-    soft_assert_ret_id(
-        system("rm -rf /root/.config/clocker/.new") == 0,
-        "Deleting directory failed!"
-    );
+        soft_assert_ret_id(
+            system("rm -rf /root/.config/clocker/.new") == 0,
+            "Deleting directory failed!"
+        );
 
-    printf("Done!\n");
-    return 1;
+        printf("Done!\n");
+        return 1;
 }
+
 
 void_t main(
     i32_t argc,

@@ -192,6 +192,12 @@ str_t update_checker_get_version(updater_t* updater) {
 }
 
 
+// str_t update_checker_get_version(updater_t* updater) {
+//     updater_inner_t* _updater = (updater_inner_t*) boxed_unbox(&updater->inner);
+//     return _updater->version;
+// }
+
+
 str_t update_checker_get_new_tag(updater_t* updater) {
     updater_inner_t* _updater = (updater_inner_t*) boxed_unbox(&updater->inner);
     return _updater->new_version;

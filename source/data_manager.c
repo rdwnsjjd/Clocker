@@ -295,7 +295,7 @@ bool_t data_manager_save_data(
     bool_t           final
 ) {
 
-    time_eval_t     time    = {0};
+    time_eval_t            time    = {0};
     data_manager_inner_t* _manager = (data_manager_inner_t*) boxed_unbox(&manager->inner);
 
     _manager->data_file_handle = fopen(_manager->paths.data_file, "w");

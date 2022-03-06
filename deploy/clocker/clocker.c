@@ -94,6 +94,13 @@ i32_t main(
     str_t argv[]
 ) {
 
+    printf(BOLD_TXT("\n\n  IMPORTANT: ") 
+        "The Clocker updater had some important changes.\n"\
+        "    Unfortunately, the updater cannot update itself\n"\
+        "    So if you want to have the last version of updater,\n"\
+        "    please get it of clocker offical repository: " UNDER_TXT(ITALIC_TXT("https://github.com/rdwnsjjd/Clocker\n\n"))
+    );
+
     // no_save flag determine if user wants to save its data on system for later use or not
     bool_t no_save = argv[1] && strcmp(argv[1], "--no-save") == 0 ? B_True : B_False;
 
