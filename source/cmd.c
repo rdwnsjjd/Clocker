@@ -89,6 +89,10 @@ handle_t cmd_run(guarded_t* arg) {
             // guarded_change(command, _(TC_Save));
         }
 
+        else if (strcmp(input, "clear\n") == 0 ||  (input[0] == 'C' && input[1] == '\n')) {
+            printf("\e[1;1H\e[2J");
+        }
+
         else if (strcmp(input, "version\n") == 0 ||  (input[0] == 'v' && input[1] == '\n')) {
             printf("\n Clocker (%s)\n"\
                 TRANSPARENT_TXT("   Copyright (C) 2021 Redwan\n"\
@@ -111,6 +115,8 @@ handle_t cmd_run(guarded_t* arg) {
                 TRANSPARENT_TXT(ITALIC_TXT(":Consider all times from now as waste \n"))\
                 TRANSPARENT_TXT(BOLD_TXT("    R, resume          "))\
                 TRANSPARENT_TXT(ITALIC_TXT(":Resume paused mode\n"))\
+                TRANSPARENT_TXT(BOLD_TXT("    C, clear           "))\
+                TRANSPARENT_TXT(ITALIC_TXT(":Set console offset to the top!\n"))
                 TRANSPARENT_TXT(BOLD_TXT("    v, version         "))\
                 TRANSPARENT_TXT(ITALIC_TXT(":Get app version \n"))\
                 TRANSPARENT_TXT(BOLD_TXT("    E, end             "))\
