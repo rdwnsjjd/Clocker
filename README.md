@@ -18,6 +18,7 @@
 -->
 
 ![GitHub release (latest SemVer including pre-releases)](https://img.shields.io/github/v/release/rdwnsjjd/Clocker?include_prereleases)
+[![CodeFactor](https://www.codefactor.io/repository/github/rdwnsjjd/clocker/badge)](https://www.codefactor.io/repository/github/rdwnsjjd/clocker)
 
 ![Screenshot from 2021-12-31 23-01-44](https://user-images.githubusercontent.com/84472404/147837215-4aeb1700-677b-4caf-a546-ecedb4abf071.png)
 
