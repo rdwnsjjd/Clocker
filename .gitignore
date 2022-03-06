@@ -1,5 +1,6 @@
 .vscode
 final
+build
 # Prerequisites
 *.d
 
