@@ -37,11 +37,11 @@ header := ${current}
 clocker := ${current}/deploy/clocker/clocker.c
 updater := ${current}/deploy/updater/updater.c
 
-buildClocker := ${current}/final/bin/clocker
-buildUpdater := ${current}/final/bin/clocker-updater
+buildClocker := ${current}/build/clocker
+buildUpdater := ${current}/build/clocker-updater
 
 all: 
-	@mkdir -p ${current}/final/bin/
+	@mkdir -p ${current}/build/
 	@gcc -I${header} -fcompare-debug-second -w -g ${component} ${clocker} -o ${buildClocker} -lpthread
 	@gcc -I${header} -fcompare-debug-second -w -g ${updater} ${updaterComponent} -o ${buildUpdater} -lpthread
 
@@ -54,7 +54,7 @@ run:
 	@sudo ${buildClocker}
 
 clean:
-	@rm -rf ${current}/final/
+	@rm -rf ${current}/build/
 
 uninstall:
 	@rm -rf /root/.config/clocker
